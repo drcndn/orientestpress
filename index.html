@@ -624,6 +624,11 @@
   </a>
   <div style="display:flex;align-items:center;gap:0.75rem;">
     <span class="header-participant" id="headerName"></span>
+    <button id="btnAide" onclick="showAide()" style="display:none;padding:0.35rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:8px;background:white;font-size:0.8rem;font-weight:600;color:#6B7280;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='#2563EB';this.style.color='#2563EB';"
+      onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+      ❓ Aide
+    </button>
     <button id="btnQuitter" onclick="confirmQuit()" style="display:none;padding:0.35rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:8px;background:white;font-size:0.8rem;font-weight:600;color:#6B7280;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#DC2626';this.style.color='#DC2626';"
       onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
@@ -1207,6 +1212,151 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN AIDE : GUIDE / FAQ / GLOSSAIRE      -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-aide">
+  <div class="container">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <h1 class="screen-title" style="margin-bottom:0;">❓ Aide</h1>
+      <button class="btn btn-secondary btn-sm" onclick="goBackFromAide()">← Retour</button>
+    </div>
+
+    <!-- Onglets -->
+    <div style="display:flex;gap:0;background:#F3F4F6;border-radius:10px;padding:4px;margin-bottom:2rem;">
+      <button id="aideTab1" onclick="switchAide(1)"
+        style="flex:1;padding:0.6rem;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;background:white;color:#111827;box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:all 0.2s;">
+        📖 Guide
+      </button>
+      <button id="aideTab2" onclick="switchAide(2)"
+        style="flex:1;padding:0.6rem;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;background:transparent;color:#6B7280;transition:all 0.2s;">
+        💬 FAQ
+      </button>
+      <button id="aideTab3" onclick="switchAide(3)"
+        style="flex:1;padding:0.6rem;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;background:transparent;color:#6B7280;transition:all 0.2s;">
+        📚 Glossaire
+      </button>
+    </div>
+
+    <!-- ── PANEL 1 : GUIDE D'UTILISATION ── -->
+    <div id="aidePanel1">
+
+      <div style="background:#EFF6FF;border-left:4px solid #2563EB;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+        <p style="font-size:0.875rem;color:#1E40AF;line-height:1.65;margin:0;">
+          Bienvenue sur <strong>OrienTestPress</strong> — la plateforme de tests d'orientation de la Cité des Métiers de Charleroi. Ce guide vous explique comment utiliser l'application étape par étape.
+        </p>
+      </div>
+
+      <!-- Étape 1 -->
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F97316,#EA580C);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;">1</div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0;">Accéder à la plateforme</h3>
+        </div>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;font-size:0.875rem;color:#374151;line-height:1.7;">
+          <p style="margin:0 0 0.5rem 0;">Ouvrez votre navigateur et rendez-vous à l'adresse :</p>
+          <div style="background:white;border:1.5px solid #F97316;border-radius:8px;padding:0.625rem 1rem;font-family:monospace;font-weight:700;color:#F97316;font-size:0.9rem;margin-bottom:0.75rem;">
+            https://drcndn.github.io/orientestpress
+          </div>
+          <p style="margin:0;">L'application fonctionne sur <strong>smartphone, tablette et ordinateur</strong> — aucune installation n'est nécessaire.</p>
+        </div>
+      </div>
+
+      <!-- Étape 2 -->
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F97316,#EA580C);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;">2</div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0;">S'identifier</h3>
+        </div>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;font-size:0.875rem;color:#374151;line-height:1.7;">
+          <p style="margin:0 0 0.5rem 0;">Sur la page d'accueil, entrez votre <strong>prénom</strong> et votre <strong>nom</strong>, puis cochez la case de consentement et cliquez sur <strong>"Commencer les tests"</strong>.</p>
+          <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:0.625rem 0.875rem;margin-top:0.625rem;">
+            <p style="margin:0;font-size:0.82rem;color:#92400E;">💡 Un <strong>code de reprise unique</strong> vous sera attribué automatiquement (ex : OTP-MARIE-7X4K). <strong>Notez-le précieusement</strong> — il vous permettra de reprendre vos tests plus tard.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 3 -->
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F97316,#EA580C);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;">3</div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0;">Réaliser les tests</h3>
+        </div>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;font-size:0.875rem;color:#374151;line-height:1.7;">
+          <p style="margin:0 0 0.75rem 0;">Vous avez accès à <strong>5 tests</strong> que vous pouvez réaliser dans l'ordre suggéré ou librement :</p>
+          <div style="display:flex;flex-direction:column;gap:0.4rem;">
+            <div style="display:flex;align-items:center;gap:0.625rem;"><span>🧠</span><span><strong>Intelligences multiples</strong> — 80 phrases à cocher (15 min)</span></div>
+            <div style="display:flex;align-items:center;gap:0.625rem;"><span>⚡</span><span><strong>SISEM</strong> — 45 paires A/B à choisir (10 min)</span></div>
+            <div style="display:flex;align-items:center;gap:0.625rem;"><span>🌟</span><span><strong>Activités que j'aime</strong> — liste libre (10 min)</span></div>
+            <div style="display:flex;align-items:center;gap:0.625rem;"><span>✨</span><span><strong>Métier de mes rêves</strong> — 4 questions ouvertes (10 min)</span></div>
+            <div style="display:flex;align-items:center;gap:0.625rem;"><span>🎯</span><span><strong>IMIC / RIASEC</strong> — 4 questionnaires (20 min)</span></div>
+          </div>
+          <p style="margin:0.75rem 0 0 0;">Durée totale estimée : <strong>~1h05</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Étape 4 -->
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F97316,#EA580C);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;">4</div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0;">Sauvegarder et reprendre</h3>
+        </div>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;font-size:0.875rem;color:#374151;line-height:1.7;">
+          <p style="margin:0 0 0.5rem 0;">À tout moment, vous pouvez cliquer sur <strong>"💾 Sauvegarder et quitter"</strong> ou sur <strong>"✕ Quitter"</strong> dans le menu en haut. Votre progression est automatiquement enregistrée.</p>
+          <p style="margin:0;">Pour reprendre, retournez sur le site, cliquez sur <strong>"🔄 Reprendre"</strong> et entrez votre code de reprise.</p>
+        </div>
+      </div>
+
+      <!-- Étape 5 -->
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F97316,#EA580C);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;">5</div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin:0;">Consulter vos résultats</h3>
+        </div>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;font-size:0.875rem;color:#374151;line-height:1.7;">
+          <p style="margin:0 0 0.5rem 0;">Après chaque test, vos résultats s'affichent immédiatement avec des explications et des pistes de métiers.</p>
+          <p style="margin:0;">Une fois tous les tests complétés, cliquez sur <strong>"📊 Voir mon bilan complet"</strong> pour accéder à la synthèse de l'ensemble de vos résultats.</p>
+        </div>
+      </div>
+
+      <!-- Conseil final -->
+      <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:1rem 1.25rem;">
+        <p style="font-size:0.875rem;color:#15803D;line-height:1.65;margin:0;">
+          ✅ <strong>Conseil :</strong> Répondez sincèrement et spontanément — il n'y a ni bonne ni mauvaise réponse. Ces tests sont là pour vous aider à mieux vous connaître, pas pour vous évaluer.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ── PANEL 2 : FAQ ── -->
+    <div id="aidePanel2" style="display:none;">
+
+      <div id="faqList" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+
+    </div>
+
+    <!-- ── PANEL 3 : GLOSSAIRE ── -->
+    <div id="aidePanel3" style="display:none;">
+
+      <div style="background:#FFF7ED;border-left:4px solid #F97316;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+        <p style="font-size:0.875rem;color:#92400E;line-height:1.65;margin:0;">
+          Vous rencontrez un terme que vous ne comprenez pas ? Ce glossaire explique les mots-clés utilisés dans les tests et les résultats.
+        </p>
+      </div>
+
+      <div id="glossaireList" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+
+    </div>
+
+    <div style="margin-top:2rem;">
+      <button class="btn btn-secondary btn-full" onclick="goBackFromAide()">← Retour</button>
+    </div>
+
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════ -->
 <script>
 // ══════════════════════════════════════════════════════════
@@ -1704,6 +1854,8 @@ function showScreen(id) {
   // Afficher le bouton Quitter sauf sur la page d'accueil
   const btn = document.getElementById('btnQuitter');
   if (btn) btn.style.display = (id === 'welcome') ? 'none' : 'inline-flex';
+  const btnAide = document.getElementById('btnAide');
+  if (btnAide) btnAide.style.display = (id === 'welcome') ? 'none' : 'inline-flex';
 }
 
 function updateProgress() {
@@ -2846,6 +2998,78 @@ function doQuit() {
     document.getElementById('btnQuitter').style.display = 'none';
     showScreen('welcome');
   }, 300);
+}
+
+
+// ══════════════════════════════════════════════════════════
+// AIDE — FAQ & GLOSSAIRE
+// ══════════════════════════════════════════════════════════
+const FAQ_DATA = [[\'Comment accéder aux tests ?\', \'Rendez-vous sur https://drcndn.github.io/orientestpress depuis votre navigateur. Entrez votre prénom et nom, cochez la case de consentement et cliquez sur "Commencer les tests".\'], [\'Puis-je faire les tests sur mon smartphone ?\', "Oui ! L\'application est entièrement adaptée aux smartphones, tablettes et ordinateurs. Aucune installation n\'est nécessaire."], [\'Combien de temps durent les tests ?\', "La durée totale estimée est d\'environ 1h05. Vous pouvez les réaliser en une seule fois ou en plusieurs séances selon vos disponibilités."], [\'Puis-je interrompre et reprendre plus tard ?\', \'Oui. Cliquez sur "💾 Sauvegarder et quitter" ou "✕ Quitter" à tout moment. Notez votre code de reprise, puis revenez sur le site et cliquez sur "🔄 Reprendre" pour continuer là où vous vous étiez arrêté(e).\'], [\'Mon code de reprise fonctionne-t-il sur un autre appareil ?\', "Oui ! Votre code de reprise fonctionne sur n\'importe quel appareil (téléphone, tablette, ordinateur). Il suffit de retourner sur le site et d\'entrer votre code."], ["J\'ai perdu mon code de reprise, que faire ?", \'Contactez votre coach à la Cité des Métiers de Charleroi. Il pourra retrouver votre dossier et vous communiquer votre code.\'], [\'Y a-t-il de bonnes ou mauvaises réponses ?\', "Non, absolument pas. Ces tests ne sont pas des évaluations. Il n\'existe ni bonne ni mauvaise réponse. L\'important est de répondre sincèrement, en vous fiant à vos ressentis et à votre vécu."], [\'Mes données sont-elles confidentielles ?\', "Oui. Vos réponses sont strictement confidentielles et uniquement accessibles à votre coach. Dans le cadre de l\'analyse assistée par IA, seul un code anonyme est utilisé — aucune information permettant de vous identifier n\'est transmise."], [\'Puis-je modifier mes réponses après avoir validé un test ?\', "Une fois un test validé et les résultats calculés, il n\'est plus possible de modifier vos réponses. Prenez le temps de bien lire les questions avant de valider."], [\'Que se passe-t-il après avoir complété tous les tests ?\', "Votre coach analysera vos résultats et les utilisera comme base pour votre entretien d\'orientation. Un rendez-vous sera planifié pour discuter ensemble des pistes professionnelles identifiées."], ["Que signifie l\'analyse assistée par IA ?", "Après avoir complété vos tests, votre coach peut utiliser une intelligence artificielle pour générer une synthèse de vos résultats. Cette synthèse est toujours relue et validée par votre coach — aucune décision n\'est prise de façon automatique."], [\'Comment consulter mes résultats ?\', \'Après chaque test, vos résultats s\\'affichent automatiquement. Vous pouvez aussi cliquer sur "📊 Voir tous mes résultats" depuis la liste des tests pour accéder au bilan complet.\']];
+const GLOSSAIRE_DATA = [[\'Code de reprise\', "Code unique généré automatiquement à votre inscription (ex : OTP-MARIE-7X4K). Il vous permet de retrouver votre progression et de reprendre vos tests depuis n\'importe quel appareil."], [\'Intelligences multiples\', "Théorie développée par Howard Gardner selon laquelle l\'intelligence humaine n\'est pas unique mais se décline en 8 formes distinctes : verbale/linguistique, logique/mathématique, spatiale, musicale, kinesthésique, interpersonnelle, intrapersonnelle et écologique/naturaliste."], [\'SISEM\', "Outil d\'orientation qui identifie vos moteurs de motivation professionnelle à travers 6 dimensions : Conquérir, Construire, Explorer, Créer, Rencontrer et Accompagner. Il révèle ce qui vous met en mouvement au travail."], [\'IMIC\', \'Inventaire Multidimensionnel des Intérêts et Compétences — outil basé sur le modèle RIASEC qui explore votre profil professionnel à travers 4 dimensions : image de soi, motivations, savoir-faire et savoir-être.\'], [\'RIASEC\', \'Modèle de John Holland qui classe les profils professionnels en 6 types : Réaliste (R), Investigateur (I), Artistique (A), Social (S), Entreprenant (E) et Conventionnel (C). Votre profil est représenté par vos 3 lettres dominantes.\'], [\'Réaliste (R)\', \'Profil orienté vers les activités concrètes et manuelles. Les personnes de type Réaliste préfèrent travailler avec leurs mains, des outils ou des machines. Exemples de métiers : technicien, mécanicien, agriculteur.\'], [\'Investigateur (I)\', "Profil orienté vers la recherche et l\'analyse. Les personnes de type Investigateur aiment comprendre, analyser et résoudre des problèmes complexes. Exemples : chercheur, médecin, ingénieur."], [\'Artistique (A)\', "Profil orienté vers la créativité et l\'expression. Les personnes de type Artistique ont besoin de s\'exprimer librement et d\'innover. Exemples : graphiste, écrivain, musicien."], [\'Social (S)\', "Profil orienté vers l\'aide et la relation. Les personnes de type Social aiment enseigner, conseiller et accompagner les autres. Exemples : enseignant, infirmier, assistant social."], [\'Entreprenant (E)\', \'Profil orienté vers le leadership et la persuasion. Les personnes de type Entreprenant aiment diriger, convaincre et prendre des initiatives. Exemples : manager, commercial, entrepreneur.\'], [\'Conventionnel (C)\', "Profil orienté vers l\'organisation et la précision. Les personnes de type Conventionnel aiment les tâches structurées et méthodiques. Exemples : comptable, secrétaire, gestionnaire."], [\'Moteur de motivation\', "Dans le cadre du SISEM, un moteur est ce qui vous pousse à agir et vous donne de l\'énergie au travail. C\'est différent de vos compétences — c\'est ce que vous aimez faire, pas nécessairement ce que vous savez faire."], [\'Intelligence interpersonnelle\', "Capacité à comprendre les autres, leurs émotions et leurs motivations. Les personnes avec une forte intelligence interpersonnelle sont à l\'aise dans les relations humaines et la communication."], [\'Intelligence intrapersonnelle\', "Capacité à se connaître soi-même : ses forces, ses faiblesses, ses émotions et ses motivations. C\'est la connaissance de soi."], [\'Analyse assistée par IA\', "Processus par lequel une intelligence artificielle génère une synthèse de vos résultats de tests pour aider votre coach à préparer votre entretien d\'orientation. Les données utilisées sont anonymisées et la synthèse est toujours validée par un professionnel."], [\'RGPD\', "Règlement Général sur la Protection des Données — règlement européen qui encadre la collecte et l\'utilisation de vos données personnelles. Il vous garantit le droit d\'accéder à vos données et de demander leur suppression à tout moment."], [\'Cité des Métiers de Charleroi\', "Structure d\'orientation professionnelle située Rue Adolphe Biarent 4, 6000 Charleroi. Elle propose des services gratuits d\'information et d\'orientation sur les métiers, les formations et le marché de l\'emploi en Wallonie."]];
+
+let _aideFromScreen = 'testlist';
+
+function showAide() {
+  // Mémoriser l'écran actuel pour le retour
+  const active = document.querySelector('.screen.active');
+  if (active) _aideFromScreen = active.id.replace('screen-', '');
+  renderFAQ();
+  renderGlossaire();
+  switchAide(1);
+  showScreen('aide');
+}
+
+function goBackFromAide() {
+  showScreen(_aideFromScreen);
+}
+
+function switchAide(num) {
+  [1,2,3].forEach(n => {
+    document.getElementById('aidePanel'+n).style.display = n===num ? 'block' : 'none';
+    const btn = document.getElementById('aideTab'+n);
+    if (n===num) {
+      btn.style.background='white'; btn.style.color='#111827'; btn.style.boxShadow='0 1px 4px rgba(0,0,0,0.1)';
+    } else {
+      btn.style.background='transparent'; btn.style.color='#6B7280'; btn.style.boxShadow='none';
+    }
+  });
+}
+
+function renderFAQ() {
+  const container = document.getElementById('faqList');
+  if (!container || container.innerHTML !== '') return;
+  container.innerHTML = FAQ_DATA.map(([q, a], i) => `
+    <div style="border:1.5px solid #E5E7EB;border-radius:10px;overflow:hidden;">
+      <button onclick="toggleFAQ(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:white;border:none;cursor:pointer;text-align:left;gap:0.75rem;"
+        onmouseover="this.style.background='#F9FAFB';" onmouseout="this.style.background='white';">
+        <span style="font-size:0.875rem;font-weight:600;color:#111827;line-height:1.5;">${q}</span>
+        <span id="faqIcon${i}" style="font-size:1rem;flex-shrink:0;color:#9CA3AF;transition:transform 0.2s;">▼</span>
+      </button>
+      <div id="faqAnswer${i}" style="display:none;padding:0 1.25rem 1rem;font-size:0.875rem;color:#374151;line-height:1.7;border-top:1px solid #F3F4F6;padding-top:0.875rem;">
+        ${a}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFAQ(i) {
+  const ans = document.getElementById('faqAnswer'+i);
+  const icon = document.getElementById('faqIcon'+i);
+  const isOpen = ans.style.display !== 'none';
+  ans.style.display = isOpen ? 'none' : 'block';
+  icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+  icon.style.color = isOpen ? '#9CA3AF' : '#F97316';
+}
+
+function renderGlossaire() {
+  const container = document.getElementById('glossaireList');
+  if (!container || container.innerHTML !== '') return;
+  container.innerHTML = GLOSSAIRE_DATA.map(([term, def]) => `
+    <div style="border:1.5px solid #E5E7EB;border-radius:10px;padding:1rem 1.25rem;background:white;">
+      <div style="font-family:'Sora',sans-serif;font-size:0.9rem;font-weight:700;color:#F97316;margin-bottom:0.4rem;">${term}</div>
+      <div style="font-size:0.875rem;color:#374151;line-height:1.7;">${def}</div>
+    </div>
+  `).join('');
 }
 
 function scrollToSection(id) {
