@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrienTestPress — Tests d'orientation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
+  :root {
+    --orange: #F97316;
+    --orange-dark: #EA580C;
+    --orange-light: #FED7AA;
+    --red: #DC2626;
+    --red-light: #FEE2E2;
+    --blue: #2563EB;
+    --blue-light: #DBEAFE;
+    --blue-dark: #1D4ED8;
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --text-light: #9CA3AF;
+    --success: #16A34A;
+    --success-light: #DCFCE7;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+  }
+  .header-participant {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    position: sticky;
+    top: 60px;
+    z-index: 99;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange), var(--red));
+    transition: width 0.4s ease;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* ── WELCOME SCREEN ── */
+  .welcome-hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+  .welcome-hero .hero-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 24px rgba(249,115,22,0.3);
+  }
+  .welcome-hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--orange-dark), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .welcome-hero p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: var(--shadow);
+  }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group:last-of-type { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+  }
+  textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    justify-content: center;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    color: white;
+    box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(249,115,22,0.4); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--orange); color: var(--orange); }
+  .btn-full { width: 100%; }
+  .btn-lg { padding: 1rem 2rem; font-size: 1rem; }
+  .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+  /* ── TEST LIST SCREEN ── */
+  .screen-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .screen-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .test-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .test-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .test-card:hover { border-color: var(--orange); box-shadow: var(--shadow); transform: translateX(3px); }
+  .test-card.completed { border-color: var(--success); background: var(--success-light); }
+  .test-card.locked { opacity: 0.5; cursor: not-allowed; }
+  .test-card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .test-card-info { flex: 1; }
+  .test-card-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.2rem; }
+  .test-card-desc { font-size: 0.8rem; color: var(--text-muted); }
+  .test-card-status {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .status-todo { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+  .status-done { background: var(--success-light); color: var(--success); }
+  .status-current { background: var(--orange-light); color: var(--orange-dark); }
+
+  /* ── TEST HEADER ── */
+  .test-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .test-header-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .test-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .test-title { font-size: 1.4rem; font-weight: 700; }
+  .test-instructions {
+    background: var(--blue-light);
+    border-left: 3px solid var(--blue);
+    padding: 0.875rem 1.1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+    color: #1E40AF;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* ── CHECKBOX ITEMS ── */
+  .checkbox-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .checkbox-item:hover { border-color: var(--orange-light); background: #FFFBF7; }
+  .checkbox-item.checked { border-color: var(--orange); background: #FFF7ED; }
+  .checkbox-item.disabled { opacity: 0.45; cursor: not-allowed; }
+  .checkbox-item input[type="checkbox"] { display: none; }
+  .custom-checkbox {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    background: white;
+  }
+  .checked .custom-checkbox {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: white;
+  }
+  .custom-checkbox::after { content: '✓'; font-size: 12px; font-weight: 700; opacity: 0; }
+  .checked .custom-checkbox::after { opacity: 1; }
+  .checkbox-text { font-size: 0.9rem; line-height: 1.55; flex: 1; }
+  .q-num { font-weight: 600; color: var(--text-muted); margin-right: 4px; font-size: 0.85rem; }
+
+  /* ── SECTION SEPARATOR ── */
+  .section-sep {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0.75rem;
+  }
+  .section-sep::before, .section-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-sep span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-light);
+    white-space: nowrap;
+  }
+
+  /* ── COUNTER BADGE ── */
+  .counter-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .counter-badge .count { font-weight: 700; color: var(--orange); font-size: 1rem; }
+  .counter-badge.maxed { border-color: var(--orange); background: #FFF7ED; }
+
+  /* ── STICKY BOTTOM ── */
+  .sticky-bottom {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin: 0 -1.25rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  }
+
+  /* ── SISEM PAIRS ── */
+  .pair-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .pair-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.875rem;
+  }
+  .pair-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+  @media (max-width: 500px) { .pair-options { grid-template-columns: 1fr; } }
+  .pair-btn {
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .pair-btn:hover { border-color: var(--orange-light); background: #FFFBF7; }
+  .pair-btn.chosen { border-color: var(--orange); background: #FFF7ED; font-weight: 500; }
+  .pair-btn .pair-label { font-weight: 700; color: var(--text-muted); margin-right: 4px; font-size: 0.8rem; }
+
+  /* ── VERBS GRID ── */
+  .verbs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 480px) { .verbs-grid { grid-template-columns: repeat(3, 1fr); } }
+  .verb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: var(--surface);
+    transition: all 0.15s;
+    min-height: 44px;
+  }
+  .verb-item:hover { border-color: var(--orange-light); background: #FFFBF7; }
+  .verb-item.checked { border-color: var(--orange); background: #FFF7ED; }
+  .verb-item.disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── RESULTS CARD ── */
+  .results-section { margin-top: 2rem; }
+  .results-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+  .results-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+  .score-bar-wrap { margin-bottom: 0.875rem; }
+  .score-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+  .score-bar-label .score-val { font-weight: 700; }
+  .score-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.4rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0.25rem;
+  }
+
+  /* ── IMIC RANK ── */
+  .rank-list { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 1.5rem; }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    cursor: grab;
+  }
+  .rank-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    color: white;
+  }
+  .rank-text { flex: 1; font-size: 0.875rem; line-height: 1.5; }
+  .rank-arrows { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+  .rank-arrow {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+  }
+  .rank-arrow:hover:not(:disabled) { border-color: var(--orange); color: var(--orange); }
+  .rank-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ── ACTIVITIES FORM ── */
+  .activity-entry {
+    background: var(--surface);
+    border: 1.5px dashed var(--orange-light);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .activity-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .activity-label { font-weight: 600; font-size: 0.95rem; }
+  .btn-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: color 0.15s;
+  }
+  .btn-remove:hover { color: var(--red); }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: var(--success-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+  }
+  .success-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--success); }
+
+  /* ── PROGRESS DOTS ── */
+  .imic-steps {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .imic-step {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .imic-step.done { background: var(--orange); }
+  .imic-step.active { background: var(--orange-light); }
+
+  /* ── DONE BANNER ── */
+  .done-banner {
+    background: var(--success-light);
+    border: 1.5px solid #86EFAC;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  /* ── EXPORT SECTION ── */
+  .export-section {
+    background: linear-gradient(135deg, #FFF7ED, #FFF1F2);
+    border: 1.5px solid var(--orange-light);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .export-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .export-desc { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+  .export-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .btn-export-json {
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: white;
+  }
+  .btn-export-csv {
+    background: linear-gradient(135deg, var(--success), #15803D);
+    color: white;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    .container { padding: 1.25rem 1rem 3rem; }
+    .welcome-hero h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <a class="logo" href="#" onclick="return false;">
+    <div class="logo-icon">🧭</div>
+    OrienTestPress
+  </a>
+  <span class="header-participant" id="headerName"></span>
+</header>
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="globalProgress" style="width:0%"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 0 : ACCUEIL / IDENTIFICATION        -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen active" id="screen-welcome">
+  <div class="container">
+    <div class="welcome-hero">
+      <div class="hero-icon">🧭</div>
+      <h1>Bienvenue sur OrienTestPress</h1>
+      <p>Ces tests vont vous aider à mieux vous connaître pour construire votre projet professionnel. Commencez par vous identifier.</p>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;margin-top:2rem;background:#F3F4F6;border-radius:10px;padding:4px;">
+      <button id="tabNew" onclick="switchTab('new')"
+        style="flex:1;padding:0.6rem;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;background:white;color:#111827;box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:all 0.2s;">
+        🆕 Commencer
+      </button>
+      <button id="tabResume" onclick="switchTab('resume')"
+        style="flex:1;padding:0.6rem;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;background:transparent;color:#6B7280;transition:all 0.2s;">
+        🔄 Reprendre
+      </button>
+    </div>
+
+    <!-- Panel Nouveau -->
+    <div class="form-card" id="panelNew">
+      <div class="form-group">
+        <label for="inputPrenom">Prénom *</label>
+        <input type="text" id="inputPrenom" placeholder="Votre prénom" autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label for="inputNom">Nom *</label>
+        <input type="text" id="inputNom" placeholder="Votre nom de famille" autocomplete="family-name">
+      </div>
+      <div class="form-group">
+        <label for="inputDate">Date de passation</label>
+        <input type="text" id="inputDate" readonly>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <button class="btn btn-primary btn-full btn-lg" onclick="startTests()">
+          Commencer les tests →
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel Reprendre -->
+    <div class="form-card" id="panelResume" style="display:none;">
+      <div class="form-group">
+        <label for="inputCode">Votre code de reprise</label>
+        <input type="text" id="inputCode" placeholder="ex: OTP-MARIE-7X4K" autocomplete="off"
+          style="text-transform:uppercase;letter-spacing:0.05em;font-weight:600;"
+          oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">
+        Entrez le code qui vous a été attribué lors de votre première session.
+      </p>
+      <button class="btn btn-primary btn-full btn-lg" onclick="resumeTests()">
+        Reprendre mes tests →
+      </button>
+      <div id="resumeError" style="display:none;margin-top:0.75rem;padding:0.75rem;background:#FEE2E2;border-radius:8px;color:#DC2626;font-size:0.875rem;">
+        Code non reconnu. Vérifiez votre code ou commencez une nouvelle session.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 1 : LISTE DES TESTS                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-testlist">
+  <div class="container">
+    <h1 class="screen-title">Mes tests</h1>
+    <p class="screen-subtitle" id="testListSubtitle">Complétez les 5 tests ci-dessous à votre rythme.</p>
+    <!-- Bandeau code de reprise -->
+    <div id="codeBanner" style="background:linear-gradient(135deg,#FFF7ED,#FFF1F2);border:1.5px solid #FED7AA;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">🔑 Votre code de reprise</div>
+        <div id="displayCode" style="font-size:1.3rem;font-weight:800;color:#EA580C;letter-spacing:0.08em;font-family:'Sora',sans-serif;"></div>
+        <div style="font-size:0.75rem;color:#B45309;margin-top:0.2rem;">Notez ce code pour reprendre vos tests plus tard sur n'importe quel appareil.</div>
+      </div>
+      <button onclick="copyCode()" id="copyBtn"
+        style="padding:0.5rem 1rem;background:#F97316;color:white;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;">
+        📋 Copier
+      </button>
+    </div>
+    <div class="test-cards" id="testCards">
+      <!-- filled by JS -->
+    </div>
+    <div id="allDoneSection" style="display:none; margin-top:2rem;">
+      <div class="export-section">
+        <div class="export-title">🎉 Tous les tests sont complétés !</div>
+        <div class="export-desc">Téléchargez vos résultats pour les partager avec votre coach.</div>
+        <div class="export-buttons">
+          <button class="btn btn-export-json" onclick="exportJSON()">⬇ Télécharger (JSON)</button>
+          <button class="btn btn-export-csv" onclick="exportCSV()">⬇ Télécharger (CSV)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T1 : INTELLIGENCES MULTIPLES        -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t1">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FFF7ED;">🧠</div>
+      <div>
+        <div class="test-num">Test 1 sur 5</div>
+        <div class="test-title">Intelligences multiples</div>
+      </div>
+    </div>
+    <div class="test-instructions">
+      Cochez toutes les phrases dans lesquelles vous vous reconnaissez. Il n'y a pas de bonne ou mauvaise réponse.
+    </div>
+    <div class="counter-badge" id="t1Counter">
+      <span>✓</span> <span class="count" id="t1Count">0</span> phrase(s) cochée(s) sur 80
+    </div>
+    <div class="checkbox-list" id="t1Questions"></div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t1Submit" onclick="submitT1()" disabled>
+        Calculer mes résultats
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T1R : RÉSULTATS IM               -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t1r">
+  <div class="container">
+    <div class="done-banner">✅ Test 1 terminé — Intelligences multiples</div>
+    <div class="results-card" id="t1Results"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+      Continuer les tests →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T2 : SISEM                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t2">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#EFF6FF;">⚡</div>
+      <div>
+        <div class="test-num">Test 2 sur 5</div>
+        <div class="test-title">SISEM — Mes moteurs</div>
+      </div>
+    </div>
+    <div class="test-instructions">
+      Pour chaque paire, choisissez la proposition qui vous attire le plus spontanément. Fiez-vous à votre ressenti — il n'y a pas de bonne réponse.
+    </div>
+    <div class="counter-badge" id="t2Counter">
+      <span>Répondu :</span> <span class="count" id="t2Count">0</span> / 45
+    </div>
+    <div id="t2Pairs"></div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t2Submit" onclick="submitT2()" disabled>
+        Calculer mes résultats
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T2R : RÉSULTATS SISEM               -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t2r">
+  <div class="container">
+    <div class="done-banner">✅ Test 2 terminé — SISEM</div>
+    <div class="results-card" id="t2Results"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+      Continuer les tests →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T3 : ACTIVITÉS                      -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t3">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#F0FDF4;">🌟</div>
+      <div>
+        <div class="test-num">Test 3 sur 5</div>
+        <div class="test-title">Les activités que j'aime</div>
+      </div>
+    </div>
+    <div class="test-instructions">
+      Identifiez les activités (vie privée ou professionnelle) qui vous procurent de la satisfaction, du plaisir ou de l'énergie. Ajoutez-en autant que vous souhaitez.
+    </div>
+    <div id="t3Activities"></div>
+    <div style="text-align:center; margin: 0.5rem 0 1.5rem;">
+      <button class="btn btn-secondary btn-sm" onclick="addActivity()">+ Ajouter une activité</button>
+    </div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t3Submit" onclick="submitT3()">
+        Valider mes activités →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T4 : MÉTIER DE MES RÊVES            -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t4">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FDF4FF;">✨</div>
+      <div>
+        <div class="test-num">Test 4 sur 5</div>
+        <div class="test-title">Le métier de mes rêves</div>
+      </div>
+    </div>
+    <div class="test-instructions">
+      Autorisez-vous à rêver, sans vous limiter par les contraintes actuelles. Vos réponses révèlent vos aspirations profondes.
+    </div>
+    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+      <div class="form-group">
+        <label>Si tout était possible, quel serait le métier que j'aimerais exercer ?</label>
+        <textarea id="t4q1" placeholder="Laissez libre cours à votre imagination…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Dans quel secteur d'activité je me sentirais le plus à ma place ?</label>
+        <textarea id="t4q2" placeholder="Décrivez le secteur idéal…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Quelles sont mes motivations profondes pour ce métier ?</label>
+        <textarea id="t4q3" placeholder="Ce qui vous anime, ce qui vous fait vibrer…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Dans quel environnement de travail je m'épanouirais le plus ?</label>
+        <textarea id="t4q4" placeholder="Bureau, extérieur, télétravail, équipe, autonomie…"></textarea>
+      </div>
+    </div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" onclick="submitT4()">
+        Valider cette section →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T5-Q1 : IMIC IMAGE DE SOI           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t5q1">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FEF2F2;">🎯</div>
+      <div>
+        <div class="test-num">Test 5 sur 5 — IMIC</div>
+        <div class="test-title">Image de soi</div>
+      </div>
+    </div>
+    <div class="imic-steps">
+      <div class="imic-step active" id="imicStep1"></div>
+      <div class="imic-step" id="imicStep2"></div>
+      <div class="imic-step" id="imicStep3"></div>
+      <div class="imic-step" id="imicStep4"></div>
+    </div>
+    <div id="t5q1SelectSection">
+      <div class="test-instructions">
+        Questionnaire 1/4 — Étape 1 : Cochez les <strong>6 phrases</strong> qui vous représentent le mieux parmi les 34.
+      </div>
+      <div class="counter-badge" id="t5q1Counter">
+        <span>Sélectionnées :</span> <span class="count" id="t5q1Count">0</span> / 6
+      </div>
+      <div class="checkbox-list" id="t5q1Phrases"></div>
+      <div class="sticky-bottom">
+        <button class="btn btn-primary btn-full" id="t5q1NextBtn" onclick="goToRanking()" disabled>
+          Passer au classement →
+        </button>
+      </div>
+    </div>
+    <div id="t5q1RankSection" style="display:none;">
+      <div class="test-instructions">
+        Questionnaire 1/4 — Étape 2 : Classez vos 6 phrases par ordre de préférence.<br>
+        <strong>Rang 1</strong> = celle qui vous ressemble le PLUS.
+      </div>
+      <div class="rank-list" id="t5q1Ranking"></div>
+      <div class="sticky-bottom" style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary" onclick="backToSelect()">← Modifier</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="submitT5Q1()">Enregistrer →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T5-Q2 : IMIC MOTIVATIONS            -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t5q2">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FEF2F2;">🎯</div>
+      <div>
+        <div class="test-num">Test 5 sur 5 — IMIC</div>
+        <div class="test-title">Motivations</div>
+      </div>
+    </div>
+    <div class="imic-steps">
+      <div class="imic-step done"></div>
+      <div class="imic-step active"></div>
+      <div class="imic-step"></div>
+      <div class="imic-step"></div>
+    </div>
+    <div class="test-instructions">
+      Questionnaire 2/4 : Cochez les <strong>20 phrases</strong> qui vous correspondent le mieux parmi les 47.
+    </div>
+    <div class="counter-badge" id="t5q2Counter">
+      <span>Sélectionnées :</span> <span class="count" id="t5q2Count">0</span> / 20
+    </div>
+    <div class="checkbox-list" id="t5q2Phrases"></div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t5q2Submit" onclick="submitT5Q2()" disabled>
+        Enregistrer →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T5-Q3 : IMIC SAVOIR-FAIRE           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t5q3">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FEF2F2;">🎯</div>
+      <div>
+        <div class="test-num">Test 5 sur 5 — IMIC</div>
+        <div class="test-title">Savoir-faire</div>
+      </div>
+    </div>
+    <div class="imic-steps">
+      <div class="imic-step done"></div>
+      <div class="imic-step done"></div>
+      <div class="imic-step active"></div>
+      <div class="imic-step"></div>
+    </div>
+    <div class="test-instructions">
+      Questionnaire 3/4 : Cochez entre <strong>20 et 40 verbes</strong> parmi les 76 selon ce que vous savez faire le mieux.
+    </div>
+    <div class="counter-badge" id="t5q3Counter">
+      <span>Sélectionnés :</span> <span class="count" id="t5q3Count">0</span> / 40 max (20 min)
+    </div>
+    <div class="verbs-grid" id="t5q3Verbs"></div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t5q3Submit" onclick="submitT5Q3()" disabled>
+        Enregistrer →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T5-Q4 : IMIC SAVOIR-ÊTRE            -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t5q4">
+  <div class="container">
+    <div class="test-header">
+      <div class="test-header-icon" style="background:#FEF2F2;">🎯</div>
+      <div>
+        <div class="test-num">Test 5 sur 5 — IMIC</div>
+        <div class="test-title">Savoir-être</div>
+      </div>
+    </div>
+    <div class="imic-steps">
+      <div class="imic-step done"></div>
+      <div class="imic-step done"></div>
+      <div class="imic-step done"></div>
+      <div class="imic-step active"></div>
+    </div>
+    <div class="test-instructions">
+      Questionnaire 4/4 : Cochez les <strong>20 qualités</strong> parmi les 48 qui décrivent le mieux qui vous êtes.
+    </div>
+    <div class="counter-badge" id="t5q4Counter">
+      <span>Sélectionnées :</span> <span class="count" id="t5q4Count">0</span> / 20
+    </div>
+    <div class="checkbox-list" id="t5q4Qualities"></div>
+    <div class="sticky-bottom">
+      <button class="btn btn-primary btn-full" id="t5q4Submit" onclick="submitT5Q4()" disabled>
+        Terminer le test IMIC →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN T5R : RÉSULTATS IMIC                -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-t5r">
+  <div class="container">
+    <div class="done-banner">✅ Test 5 terminé — IMIC / RIASEC</div>
+    <div class="results-card" id="t5Results"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+      Retour à l'accueil →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+
+// ── TEST 1 : INTELLIGENCES MULTIPLES ──
+const IM_QUESTIONS = [
+  "J'aime les livres parlant d'animaux.",
+  "J'aime raconter des anecdotes et des plaisanteries.",
+  "Je bouge constamment et je préfère être en action que de rester assis.",
+  "J'aime écrire mes pensées dans un journal personnel.",
+  "J'aime organiser des activités sociales.",
+  "À la lecture de la description d'un lieu, je me le représente facilement.",
+  "J'aime comprendre le fonctionnement des choses.",
+  "Je reproduis facilement des rythmes avec des objets.",
+  "J'aime participer à des présentations orales.",
+  "J'ai du rythme quand je danse.",
+  "J'aime faire de la décoration.",
+  "J'aime organiser l'information d'une façon structurée.",
+  "Je suis passionné par les phénomènes naturels.",
+  "Je préfère le travail d'équipe au travail individuel.",
+  "J'aime me retrouver seul(e) pour travailler.",
+  "J'aime la danse.",
+  "Je me préoccupe du bien-être des autres.",
+  "Je visualise facilement des objets ou des situations dans ma tête.",
+  "J'adore écrire des lettres.",
+  "Je suis très sensible à l'intonation et au ton.",
+  "J'aime observer les oiseaux.",
+  "J'aime manipuler des objets et faire des maquettes.",
+  "J'aime faire appel à différentes stratégies pour résoudre des difficultés.",
+  "Les gens qui m'entourent me perçoivent comme une personne sage et me consultent pour avoir mon avis.",
+  "J'aime rencontrer de nouvelles personnes.",
+  "Je visite le zoo avec intérêt.",
+  "J'ai besoin de travailler à mon rythme dans des projets que j'ai choisis.",
+  "J'ai des arguments logiques pour expliquer ce que je fais.",
+  "J'ai de la facilité en orthographe.",
+  "J'aime taper des mains ou du pied en écoutant la musique.",
+  "J'aime réaliser des cartes d'organisation d'idées.",
+  "Je suis très habile à démonter et à remonter des objets (moteur, calculatrice...).",
+  "J'aime faire du calcul mental (jogging mathématique).",
+  "J'aime me perdre dans mes réflexions.",
+  "Je m'oriente facilement dans un nouvel endroit.",
+  "J'aime jouer d'un instrument de musique.",
+  "J'aime les photographies de paysages illustrant la faune et la flore.",
+  "J'aime les arts plastiques.",
+  "J'aime les jeux impliquant des mots (scrabble, mots croisés, mots mystères...).",
+  "Je suis ouvert aux opinions des autres.",
+  "J'aime écouter des émissions scientifiques.",
+  "Je m'adapte facilement aux différentes personnes (âge, culture, valeurs...) et y trouve de l'intérêt.",
+  "J'aime regarder des événements sportifs et en parler.",
+  "Je peux facilement identifier divers styles de musique.",
+  "Mes objectifs d'avenir sont bien définis.",
+  "J'aime improviser et jouer au théâtre.",
+  "Je collectionne des objets (animaux, insectes) se rapportant à la nature.",
+  "J'aime connaître la signification des mots.",
+  "J'aime expliquer aux autres ce que j'ai appris.",
+  "J'ai de la facilité à identifier les émotions que je ressens.",
+  "J'aime fredonner des mélodies.",
+  "Quand j'ai les mains libres, j'aime jouer avec les objets qui sont à ma portée.",
+  "J'ai de la facilité à organiser mentalement mes idées.",
+  "J'ai toujours eu ou voulu avoir des animaux domestiques.",
+  "Je saisis facilement les sentiments et les émotions des autres.",
+  "J'adore dessiner.",
+  "J'aime rassembler des casse-têtes.",
+  "J'aime chanter sans musique (a capella).",
+  "Je connais bien mes goûts et mes préférences.",
+  "Je m'intéresse aux idées des autres.",
+  "J'aime installer des mangeoires pour les animaux sauvages ou les oiseaux.",
+  "Je mémorise facilement ce que je lis.",
+  "J'aime les énigmes, les jeux d'enquête et de stratégies.",
+  "J'aime les arts parce que je peux travailler avec mes mains (dessin, couture...).",
+  "J'aime écouter des histoires et des poèmes.",
+  "Je suis sensible aux bruits de mon environnement (la pluie, la photocopieuse, l'horloge...).",
+  "J'aime aller à la ferme.",
+  "J'aime les cours de mathématique.",
+  "J'aime pratiquer des sports.",
+  "Presque toutes les questions m'inspirent une opinion précise et assurée.",
+  "J'aide les gens à résoudre leurs problèmes et leurs conflits.",
+  "J'ai un bon sens de l'observation.",
+  "Je n'ai pas besoin de récompenses pour être motivé.",
+  "Je comprends rapidement, je fais facilement des liens entre les idées.",
+  "Je me sens bien lorsque je suis dans la forêt.",
+  "Je trouve facilement des ressemblances entre des mélodies.",
+  "J'aime imiter les gestes des autres.",
+  "J'aime les sports d'équipe et les activités de coopération.",
+  "À partir d'un plan, je m'imagine facilement le produit final.",
+  "J'ai un grand intérêt pour les langues étrangères."
+];
+
+const IM_SCORING = {
+  interpersonnelle: [5,14,17,25,40,42,55,60,71,78],
+  intrapersonnelle: [4,15,24,27,34,45,50,59,70,73],
+  spatiale:         [6,11,18,31,35,38,56,57,72,79],
+  musicale:         [8,10,20,30,36,44,51,58,66,76],
+  ecologique:       [1,13,21,26,37,47,54,61,67,75],
+  kinesthesique:    [3,16,22,32,43,46,52,64,69,77],
+  verbale:          [2,9,19,29,39,48,49,62,65,80],
+  logique:          [7,12,23,28,33,41,53,63,68,74]
+};
+
+const IM_LABELS = {
+  interpersonnelle: 'Interpersonnelle', intrapersonnelle: 'Intrapersonnelle',
+  spatiale: 'Spatiale', musicale: 'Musicale', ecologique: 'Écologique',
+  kinesthesique: 'Kinesthésique', verbale: 'Verbale', logique: 'Logique'
+};
+
+const IM_COLORS = ['#3B82F6','#8B5CF6','#10B981','#EC4899','#F59E0B','#F97316','#6366F1','#14B8A6'];
+
+// ── TEST 2 : SISEM ──
+const SISEM_PAIRS = [
+  [{text:"Être au cœur de l'action, m'engager à fond",code:"CQ"},{text:"Prendre les choses en main pour un résultat qui me convient",code:"CT"}],
+  [{text:"Comprendre comment ça fonctionne",code:"EX"},{text:"Concevoir quelque chose d'original",code:"CR"}],
+  [{text:"Discuter avec des gens rien que pour les connaître",code:"RE"},{text:"Prendre du temps pour comprendre et aider l'autre",code:"AC"}],
+  [{text:"Prendre des risques et réussir quelque chose d'exceptionnel",code:"CQ"},{text:"Rassembler les indices qui permettent de résoudre l'énigme",code:"EX"}],
+  [{text:"Faire les choses pour ne plus avoir à y revenir",code:"CT"},{text:"Aborder les choses sous un angle nouveau",code:"CR"}],
+  [{text:"Mener des recherches et découvrir l'explication",code:"EX"},{text:"Connaître les gens dans leur diversité",code:"RE"}],
+  [{text:"Varier de l'ordinaire par une touche de nouveauté",code:"CR"},{text:"Trouver les mots qui aident",code:"AC"}],
+  [{text:"Entreprendre des actions à priori impossibles",code:"CQ"},{text:"Sortir des sentiers battus",code:"EX"}],
+  [{text:"Bâtir sur des fondations stables",code:"CT"},{text:"Échanger avec des gens qui vivent autrement que moi",code:"RE"}],
+  [{text:"Visiter des univers étranges et mystérieux",code:"CR"},{text:"Faciliter l'envol de quelqu'un qui se lance",code:"AC"}],
+  [{text:"Tenter ma chance, même si cela paraît infaisable",code:"CQ"},{text:"M'enrichir de la différence des autres",code:"RE"}],
+  [{text:"Faire que chaque pièce s'assemble parfaitement avec les autres",code:"CT"},{text:"Établir des relations chaleureuses avec les autres",code:"AC"}],
+  [{text:"Soigner le côté esthétique",code:"CR"},{text:"Faire de chaque contact une vraie rencontre",code:"RE"}],
+  [{text:"Prendre les raccourcis et coiffer tout le monde sur le fil",code:"CQ"},{text:"Partager des moments de vie avec les autres",code:"AC"}],
+  [{text:"Exercer un pouvoir sur la matière",code:"CT"},{text:"Trouver l'astuce qui règle le problème",code:"EX"}],
+  [{text:"Me faufiler entre les obstacles et rebondir sur les difficultés",code:"CQ"},{text:"Procéder par étape jusqu'au résultat voulu",code:"CT"}],
+  [{text:"Dénouer les fils de l'intrigue",code:"EX"},{text:"Mettre le petit plus de nouveauté",code:"CR"}],
+  [{text:"Côtoyer des gens très différents les uns des autres",code:"RE"},{text:"Faire corps dans la difficulté",code:"AC"}],
+  [{text:"Foncer vers mes buts, donner à ma vie un parfum d'aventure",code:"CQ"},{text:"Mettre le doigt sur le détail qui change tout",code:"EX"}],
+  [{text:"Piloter une opération de A à Z",code:"CT"},{text:"Changer d'approche, voir les choses autrement",code:"CR"}],
+  [{text:"Explorer des domaines inconnus",code:"EX"},{text:"Rencontrer des gens de cultures différentes",code:"RE"}],
+  [{text:"Créer un style personnel",code:"CR"},{text:"Être présent pour l'autre dans les moments importants",code:"AC"}],
+  [{text:"Être le premier à me lancer, ouvrir la voie aux autres",code:"CQ"},{text:"Faire que ce soit différent et beau à la fois",code:"CR"}],
+  [{text:"Édifier quelque chose de solide et de durable",code:"CT"},{text:"Échanger pour connaître d'autres points de vue",code:"RE"}],
+  [{text:"Repérer l'information qui fait la différence",code:"EX"},{text:"Donner sa chance à chacun",code:"RE"}],
+  [{text:"Aller plus loin, plus haut, plus fort",code:"CQ"},{text:"Inviter les gens à parler d'eux",code:"AC"}],
+  [{text:"Utiliser des outils efficaces pour un travail de qualité",code:"CT"},{text:"Maintenir un lien fort avec l'autre quoiqu'il arrive",code:"AC"}],
+  [{text:"Apporter du changement et faire évoluer les choses",code:"CR"},{text:"Découvrir ce que chaque personne a de particulier",code:"RE"}],
+  [{text:"Être le plus rapide et prendre tout le monde de vitesse",code:"CQ"},{text:"Être aux côtés des gens qui ont besoin d'aide",code:"AC"}],
+  [{text:"Contrôler que tout fonctionne parfaitement",code:"CT"},{text:"Suivre la piste qui mène à la solution",code:"EX"}],
+  [{text:"Côtoyer les limites de l'extrême",code:"CQ"},{text:"Suivre un plan pour un résultat garanti",code:"CT"}],
+  [{text:"Lever le voile sur des réalités cachées",code:"EX"},{text:"Donner une touche de nouveauté",code:"CR"}],
+  [{text:"Échanger avec des gens venant d'horizons multiples",code:"RE"},{text:"Tendre la main à l'autre dans les moments cruciaux",code:"AC"}],
+  [{text:"Relever un challenge qui découragerait la plupart des gens",code:"CQ"},{text:"Établir des corrélations et des recoupements",code:"EX"}],
+  [{text:"Employer une méthode sûre et fiable",code:"CT"},{text:"Élaborer d'autres façons de procéder",code:"CR"}],
+  [{text:"Enquêter pour comprendre le pourquoi du comment",code:"EX"},{text:"Faire de chaque rencontre une nouvelle histoire",code:"RE"}],
+  [{text:"Mettre en place des idées innovantes",code:"CR"},{text:"Entretenir des relations de proximité avec les autres",code:"AC"}],
+  [{text:"M'attaquer à des défis réputés inaccessibles",code:"CQ"},{text:"Ajouter ma touche personnelle",code:"CR"}],
+  [{text:"Faire en sorte que tout se déroule comme prévu",code:"CT"},{text:"Faire la connaissance de gens insolites",code:"RE"}],
+  [{text:"Expérimenter des façons différentes de procéder",code:"EX"},{text:"Faire en sorte que les gens se sentent bien",code:"AC"}],
+  [{text:"Repousser les limites, quitte à flirter avec le danger",code:"CQ"},{text:"M'ouvrir à d'autres façons de penser ou de vivre",code:"RE"}],
+  [{text:"Placer chaque pièce au bon endroit dans le dispositif",code:"CT"},{text:"Soutenir l'autre dans ses périodes de doute",code:"AC"}],
+  [{text:"Concevoir quelque chose de différent",code:"CR"},{text:"Considérer chaque personne pour ce qu'elle a d'unique",code:"RE"}],
+  [{text:"Battre un record qui fera date",code:"CQ"},{text:"Aider l'autre à grandir",code:"AC"}],
+  [{text:"Maîtriser les limites de mon territoire",code:"CT"},{text:"Observer pour comprendre",code:"EX"}]
+];
+
+const SISEM_LABELS = {CQ:"Conquérir",CT:"Construire",EX:"Explorer",CR:"Créer",RE:"Rencontrer",AC:"Accompagner"};
+const SISEM_COLORS = {CQ:"#DC2626",CT:"#2563EB",EX:"#7C3AED",CR:"#D97706",RE:"#059669",AC:"#DB2777"};
+const SISEM_CROSSING = {
+  "AC-CQ":"Coopérer / Secourir","CQ-RE":"Entreprendre","CQ-CR":"Promouvoir","CQ-EX":"Défricher",
+  "CQ-CT":"Exploiter / Produire","AC-CT":"Faciliter la vie","CT-RE":"Faire du business",
+  "CR-CT":"Modeler / Transformer","CT-EX":"Administrer / Gérer","AC-EX":"Conseiller",
+  "EX-RE":"Communiquer / Transmettre","CR-EX":"Concevoir","AC-CR":"Éveiller",
+  "CR-RE":"Animer","AC-RE":"Favoriser la relation"
+};
+
+// ── IMIC Q1 : PHRASES IMAGE DE SOI ──
+const IMIC_Q1_PHRASES = [
+  {id:1,text:"J'aime les activités intellectuelles, le monde des idées, la recherche de connaissances et les théories scientifiques.",letter:"I"},
+  {id:2,text:"J'apprécie généralement résoudre des problèmes abstraits, analyser des données et mener des études.",letter:"I"},
+  {id:3,text:"J'entre en relation avec mon environnement en manipulant les idées, les mots et les symboles.",letter:"I"},
+  {id:4,text:"Je manifeste un moins grand intérêt pour l'action, la domination et la sociabilité. Je suis studieux et j'aime les domaines scientifiques. Par contre, je suis un piètre leader.",letter:"I"},
+  {id:5,text:"J'aime les activités relationnelles, avec l'objectif d'aider, d'informer, de conseiller, d'apprendre aux autres.",letter:"S"},
+  {id:6,text:"Je possède une bonne intelligence sociale, un sens des responsabilités vis-à-vis de l'entourage, un certain conformisme et je suis chaleureux.",letter:"S"},
+  {id:7,text:"J'ai une image positive de moi-même et une aisance verbale certaine.",letter:"S"},
+  {id:8,text:"Je me sens concerné par le bien-être de l'humanité et par l'aide aux personnes en difficulté.",letter:"S"},
+  {id:9,text:"Je maîtrise mon environnement avec mon talent pour entrer en contact et traiter avec les autres individus.",letter:"S"},
+  {id:10,text:"J'ai un réel don du contact et j'ai besoin de nombreuses interactions.",letter:"S"},
+  {id:11,text:"Je manifeste un moins grand intérêt pour les domaines scientifiques, techniques, la résolution des problèmes intellectuels ainsi qu'à l'engagement physique.",letter:"S"},
+  {id:12,text:"J'aime les arts et toutes les activités qui autorisent une libre expression de soi : créer, imaginer, jouer la comédie, décorer, écrire, etc.",letter:"A"},
+  {id:13,text:"J'aime exprimer mes émotions et je le fais généralement plus aisément que la plupart des gens. Je recherche l'autonomie, le non-conformisme, l'indépendance.",letter:"A"},
+  {id:14,text:"Je suis en relation avec mon environnement en créant des formes et objets d'art.",letter:"A"},
+  {id:15,text:"Je me base sur mes impressions, ma subjectivité et ma fantaisie lorsque je dois trouver des solutions, quelle que soit la nature du problème posé.",letter:"A"},
+  {id:16,text:"Je n'apprécie pas la routine, les structures lourdes et les environnements contraignants.",letter:"A"},
+  {id:17,text:"J'aime les activités nécessitant une certaine minutie, le sens du détail, le goût de l'ordre, des règles, de l'auto-contrôle.",letter:"C"},
+  {id:18,text:"Je préfère des situations structurées, définies de façon claire et précise.",letter:"C"},
+  {id:19,text:"Je donne bonne impression en raison de mon ordre, de ma simplicité et de ma sociabilité.",letter:"C"},
+  {id:20,text:"Je fais face aux difficultés en me conformant à la norme sociale, aux règles établies.",letter:"C"},
+  {id:21,text:"J'ai un caractère inflexible et je fais preuve de self-contrôle. Je ne suis pas une personnalité très dominante.",letter:"C"},
+  {id:22,text:"J'aime le pouvoir, le leadership, les activités de persuasion et d'influence.",letter:"E"},
+  {id:23,text:"J'aime décider, détenir les leviers de commande auxquels les autres se soumettent, convaincre, diriger, négocier, vendre et faire de la politique.",letter:"E"},
+  {id:24,text:"J'utilise plus volontiers mon habilité verbale pour obtenir gain de cause que pour soutenir et encourager les autres.",letter:"E"},
+  {id:25,text:"De nature extraverti, je suis à la recherche d'un statut social élevé, de responsabilités, d'autonomie.",letter:"E"},
+  {id:26,text:"Je suis sociable, chaleureux, impulsif, stable et plutôt dominant.",letter:"E"},
+  {id:27,text:"Je m'affirme en recherchant le pouvoir, acquérant des biens, dominant les autres.",letter:"E"},
+  {id:28,text:"Par contre, je n'aime pas être limité ni isolé socialement ou confiné à des tâches manuelles.",letter:"E"},
+  {id:29,text:"J'aime les activités concrètes, pratiques, qui nécessitent un travail manuel et une certaine dépense physique.",letter:"R"},
+  {id:30,text:"Je préfère l'action à la réflexion, les problèmes concrets aux problèmes abstraits.",letter:"R"},
+  {id:31,text:"Je suis fréquemment décrit comme robuste, pratique, physiquement résistant, émotionnellement stable.",letter:"R"},
+  {id:32,text:"En général, je manifeste un moins grand intérêt pour ce qui est apparenté aux idées, à l'abstrait et parfois aux relations étroites de personne à personne.",letter:"R"},
+  {id:33,text:"J'évite les rôles de supervision ou de leadership et les situations sociales dans lesquelles je pourrais me trouver au centre de l'attention.",letter:"R"},
+  {id:34,text:"J'évite également les activités et les missions qui demandent de la subjectivité ainsi que celles qui demandent une aisance verbale ou le maniement d'abstractions.",letter:"R"}
+];
+
+// ── IMIC Q2 : MOTIVATIONS ──
+const IMIC_Q2_PHRASES = [
+  {id:1,text:"Réparer, bricoler, construire des objets concrets",letter:"R"},
+  {id:2,text:"Travailler en plein air, avec la nature",letter:"R"},
+  {id:3,text:"Utiliser des outils, des machines",letter:"R"},
+  {id:4,text:"Faire un travail manuel précis",letter:"R"},
+  {id:5,text:"Résoudre des problèmes techniques pratiques",letter:"R"},
+  {id:6,text:"Observer, explorer, comprendre le monde",letter:"I"},
+  {id:7,text:"Faire des recherches, analyser des données",letter:"I"},
+  {id:8,text:"Résoudre des problèmes complexes et abstraits",letter:"I"},
+  {id:9,text:"Apprendre continuellement de nouvelles choses",letter:"I"},
+  {id:10,text:"Travailler de façon indépendante sur des projets intellectuels",letter:"I"},
+  {id:11,text:"Créer, imaginer, inventer",letter:"A"},
+  {id:12,text:"S'exprimer artistiquement (musique, écriture, dessin...)",letter:"A"},
+  {id:13,text:"Travailler dans un environnement original et stimulant",letter:"A"},
+  {id:14,text:"Avoir une grande liberté dans son travail",letter:"A"},
+  {id:15,text:"Produire quelque chose de beau ou d'original",letter:"A"},
+  {id:16,text:"Aider les autres à résoudre leurs problèmes",letter:"S"},
+  {id:17,text:"Enseigner, former, transmettre des connaissances",letter:"S"},
+  {id:18,text:"Travailler en équipe dans une ambiance chaleureuse",letter:"S"},
+  {id:19,text:"Contribuer au bien-être des autres",letter:"S"},
+  {id:20,text:"Écouter, conseiller, soutenir",letter:"S"},
+  {id:21,text:"Convaincre, persuader, négocier",letter:"E"},
+  {id:22,text:"Diriger une équipe ou un projet",letter:"E"},
+  {id:23,text:"Prendre des initiatives et des responsabilités",letter:"E"},
+  {id:24,text:"Atteindre des objectifs ambitieux",letter:"E"},
+  {id:25,text:"Avoir de l'influence sur les décisions",letter:"E"},
+  {id:26,text:"Organiser, classer, planifier",letter:"C"},
+  {id:27,text:"Travailler avec des chiffres, des données précises",letter:"C"},
+  {id:28,text:"Respecter des procédures claires et définies",letter:"C"},
+  {id:29,text:"Produire un travail soigné et sans erreur",letter:"C"},
+  {id:30,text:"Évoluer dans un environnement stable et prévisible",letter:"C"},
+  {id:31,text:"Concevoir des systèmes ou des mécanismes",letter:"R"},
+  {id:32,text:"Comprendre le fonctionnement des choses",letter:"I"},
+  {id:33,text:"Explorer de nouvelles idées sans contraintes",letter:"A"},
+  {id:34,text:"Accompagner des personnes en difficulté",letter:"S"},
+  {id:35,text:"Gérer des projets de A à Z",letter:"E"},
+  {id:36,text:"Vérifier, contrôler, valider",letter:"C"},
+  {id:37,text:"Travailler avec ses mains",letter:"R"},
+  {id:38,text:"Mener des expériences, tester des hypothèses",letter:"I"},
+  {id:39,text:"Avoir un travail où chaque jour est différent",letter:"A"},
+  {id:40,text:"Créer du lien entre les personnes",letter:"S"},
+  {id:41,text:"Développer une vision stratégique",letter:"E"},
+  {id:42,text:"Assurer le suivi administratif",letter:"C"},
+  {id:43,text:"Construire, assembler, fabriquer",letter:"R"},
+  {id:44,text:"Comprendre les comportements humains",letter:"I"},
+  {id:45,text:"Valoriser l'esthétique dans son travail",letter:"A"},
+  {id:46,text:"Défendre les intérêts des autres",letter:"S"},
+  {id:47,text:"Entreprendre, lancer des projets",letter:"E"}
+];
+
+// ── IMIC Q3 : VERBES SAVOIR-FAIRE ──
+const IMIC_Q3_VERBS = [
+  {id:1,text:"Proposer",letter:"S"},{id:2,text:"Participer",letter:"S"},{id:3,text:"Acheter",letter:"E"},
+  {id:4,text:"Écrire",letter:"A"},{id:5,text:"Réfléchir",letter:"I"},{id:6,text:"Installer",letter:"R"},
+  {id:7,text:"Assembler",letter:"R"},{id:8,text:"Produire",letter:"R"},{id:9,text:"Apprendre",letter:"I"},
+  {id:10,text:"Comprendre",letter:"I"},{id:11,text:"Exprimer",letter:"A"},{id:12,text:"Vendre",letter:"E"},
+  {id:13,text:"Décorer",letter:"A"},{id:14,text:"Chercher",letter:"I"},{id:15,text:"Bricoler",letter:"R"},
+  {id:16,text:"Encadrer",letter:"E"},{id:17,text:"Dialoguer",letter:"S"},{id:18,text:"Aider",letter:"S"},
+  {id:19,text:"Assister",letter:"S"},{id:20,text:"S'Informer",letter:"I"},{id:21,text:"Écouter",letter:"S"},
+  {id:22,text:"Rencontrer",letter:"S"},{id:23,text:"Observer",letter:"I"},{id:24,text:"Informer",letter:"S"},
+  {id:25,text:"Échanger",letter:"A"},{id:26,text:"Conseiller",letter:"S"},{id:27,text:"Animer",letter:"S"},
+  {id:28,text:"Créer",letter:"A"},{id:29,text:"Argumenter",letter:"E"},{id:30,text:"Synthétiser",letter:"I"},
+  {id:31,text:"Contrôler",letter:"C"},{id:32,text:"Gérer",letter:"C"},{id:33,text:"Réaliser",letter:"R"},
+  {id:34,text:"Former",letter:"S"},{id:35,text:"Construire",letter:"R"},{id:36,text:"Modifier",letter:"R"},
+  {id:37,text:"Fabriquer",letter:"R"},{id:38,text:"Inventorier",letter:"C"},{id:39,text:"Organiser",letter:"E"},
+  {id:40,text:"Corriger",letter:"C"},{id:41,text:"Rentabiliser",letter:"C"},{id:42,text:"Prévoir",letter:"E"},
+  {id:43,text:"Innover",letter:"A"},{id:44,text:"Interpréter",letter:"A"},{id:45,text:"Étudier",letter:"I"},
+  {id:46,text:"Dessiner",letter:"A"},{id:47,text:"Diriger",letter:"E"},{id:48,text:"Décider",letter:"E"},
+  {id:49,text:"Entreprendre",letter:"E"},{id:50,text:"Calculer",letter:"C"},{id:51,text:"Planifier",letter:"C"},
+  {id:52,text:"Comparer",letter:"I"},{id:53,text:"Convaincre",letter:"E"},{id:54,text:"Élaborer",letter:"A"},
+  {id:55,text:"Résoudre",letter:"I"},{id:56,text:"Improviser",letter:"A"},{id:57,text:"Transformer",letter:"R"},
+  {id:58,text:"Développer",letter:"E"},{id:59,text:"Éduquer",letter:"S"},{id:60,text:"Aménager",letter:"R"},
+  {id:61,text:"Analyser",letter:"I"},{id:62,text:"Surveiller",letter:"C"},{id:63,text:"Soigner",letter:"S"},
+  {id:64,text:"Découvrir",letter:"A"},{id:65,text:"Manipuler",letter:"R"},{id:66,text:"Inventer",letter:"A"},
+  {id:67,text:"Négocier",letter:"E"},{id:68,text:"Mesurer",letter:"R"},{id:69,text:"Enregistrer",letter:"C"},
+  {id:70,text:"Comptabiliser",letter:"C"},{id:71,text:"Diagnostiquer",letter:"I"},{id:72,text:"Concevoir",letter:"I"},
+  {id:73,text:"Vérifier",letter:"C"},{id:74,text:"Évaluer",letter:"C"},{id:75,text:"Réparer",letter:"R"},
+  {id:76,text:"Imaginer",letter:"A"}
+];
+
+// ── IMIC Q4 : QUALITÉS SAVOIR-ÊTRE ──
+const IMIC_Q4_QUALITIES = [
+  {id:1,text:"Je sais aller à l'essentiel.",keyword:"SYNTHÈSE",letter:"I"},
+  {id:2,text:"Je fais preuve de bon sens dans mes jugements.",keyword:"BON SENS",letter:"R"},
+  {id:3,text:"J'ai des principes qui dictent ma conduite.",keyword:"RECTITUDE",letter:"C"},
+  {id:4,text:"J'agis selon mes propres lois, en toute responsabilité.",keyword:"AUTONOMIE",letter:"E"},
+  {id:5,text:"Je sais organiser les choses de façon efficace.",keyword:"ORGANISATION",letter:"I"},
+  {id:6,text:"J'apprécie la stabilité ou la continuité des choses.",keyword:"STABILITÉ",letter:"C"},
+  {id:7,text:"J'obtiens effectivement les résultats voulus.",keyword:"EFFICACITÉ",letter:"R"},
+  {id:8,text:"Je raisonne de manière logique et cohérente.",keyword:"LOGIQUE",letter:"I"},
+  {id:9,text:"Je me mets aisément à la place de l'autre.",keyword:"EMPATHIE",letter:"S"},
+  {id:10,text:"Je respecte les opinions d'autrui.",keyword:"TOLÉRANCE",letter:"S"},
+  {id:11,text:"Je suis attentif aux autres et à ce qu'ils expriment.",keyword:"ÉCOUTE",letter:"S"},
+  {id:12,text:"J'impose de façon naturelle l'obéissance ou le respect.",keyword:"AUTORITÉ",letter:"E"},
+  {id:13,text:"Je pense ou j'agis dans le but d'être utile aux autres.",keyword:"HUMANISME",letter:"S"},
+  {id:14,text:"J'exerce une influence dominante sur les autres.",keyword:"ASCENDANT",letter:"E"},
+  {id:15,text:"Je recherche volontiers la compagnie des autres.",keyword:"SOCIABILITÉ",letter:"S"},
+  {id:16,text:"Je juge les situations avec clarté et objectivité.",keyword:"LUCIDITÉ",letter:"I"},
+  {id:17,text:"J'évite de prendre des risques inutiles.",keyword:"PRUDENCE",letter:"C"},
+  {id:18,text:"J'ai le souci de l'exactitude et de la précision.",keyword:"PRÉCISION",letter:"C"},
+  {id:19,text:"Je sais me concentrer pour examiner à fond une question.",keyword:"RÉFLEXION",letter:"I"},
+  {id:20,text:"J'agis en vue d'obtenir des résultats concrets.",keyword:"ESPRIT CONCRET",letter:"R"},
+  {id:21,text:"J'accepte les règles et structures établies.",keyword:"DISCIPLINE",letter:"C"},
+  {id:22,text:"Je persiste jusqu'à l'aboutissement de ce que j'ai entrepris.",keyword:"PERSÉVÉRANCE",letter:"C"},
+  {id:23,text:"Je décide quand il le faut, sans hésiter.",keyword:"DÉCISION",letter:"E"},
+  {id:24,text:"Je travaille avec constance et assiduité.",keyword:"RÉGULARITÉ",letter:"R"},
+  {id:25,text:"J'ose prendre des risques.",keyword:"AUDACE",letter:"E"},
+  {id:26,text:"Je réagis rapidement aux événements.",keyword:"RÉACTIVITÉ",letter:"A"},
+  {id:27,text:"Je prévois les conséquences de mes actes.",keyword:"PRÉVOYANCE",letter:"I"},
+  {id:28,text:"Je procède de manière méthodique pour parvenir à mon but.",keyword:"MÉTHODE",letter:"I"},
+  {id:29,text:"Je fais les choses avec calme.",keyword:"CALME",letter:"R"},
+  {id:30,text:"Je suis consciencieux dans mon travail.",keyword:"CONSCIENCE PROF.",letter:"C"},
+  {id:31,text:"Je préfère la pratique à la théorie.",keyword:"PRAGMATISME",letter:"R"},
+  {id:32,text:"Je suis solidaire du groupe auquel j'appartiens.",keyword:"ESPRIT D'ÉQUIPE",letter:"S"},
+  {id:33,text:"J'aime connaître ou voir des choses nouvelles.",keyword:"CURIOSITÉ",letter:"A"},
+  {id:34,text:"Je fais preuve d'astuce et d'ingéniosité pour résoudre un problème.",keyword:"INGÉNIOSITÉ",letter:"A"},
+  {id:35,text:"Je suis stimulé par la recherche d'idées originales.",keyword:"IMAGINATION",letter:"A"},
+  {id:36,text:"Je sais adapter ma façon de parler à mes interlocuteurs.",keyword:"COMMUNICATION",letter:"S"},
+  {id:37,text:"Je suis conscient de mes capacités.",keyword:"CONFIANCE EN SOI",letter:"E"},
+  {id:38,text:"Je suis actif et dynamique.",keyword:"VITALITÉ",letter:"R"},
+  {id:39,text:"Je fais preuve d'innovation dans ce que je fais.",keyword:"CRÉATIVITÉ",letter:"A"},
+  {id:40,text:"Je m'adapte facilement aux changements.",keyword:"ADAPTATION",letter:"A"},
+  {id:41,text:"Je sais décortiquer un problème pour mieux l'étudier.",keyword:"ANALYSE",letter:"I"},
+  {id:42,text:"Je sens ou devine instinctivement les choses ou les gens.",keyword:"INTUITION",letter:"A"},
+  {id:43,text:"Je sais harmoniser et animer le travail d'un groupe.",keyword:"ANIMATION",letter:"S"},
+  {id:44,text:"Je contrôle bien mes réactions.",keyword:"MAÎTRISE DE SOI",letter:"C"},
+  {id:45,text:"Je sais maintenir l'équilibre entre la passion et la raison.",keyword:"ÉQUILIBRE",letter:"R"},
+  {id:46,text:"Je me donne à fond dans ce que j'aime faire.",keyword:"PASSION",letter:"A"},
+  {id:47,text:"J'ai l'esprit combatif et la volonté de gagner.",keyword:"COMBATIVITÉ",letter:"E"},
+  {id:48,text:"J'affirme ma personnalité sans me laisser influencer.",keyword:"ASSURANCE",letter:"E"}
+];
+
+const RIASEC_LABELS = {R:"Réaliste",I:"Investigateur",A:"Artistique",S:"Social",E:"Entreprenant",C:"Conventionnel"};
+const RIASEC_COLORS = {R:"#EF4444",I:"#3B82F6",A:"#8B5CF6",S:"#10B981",E:"#F59E0B",C:"#6B7280"};
+const RANK_POINTS = [6,5,4,3,2,1];
+const RANK_BG = ["#92400E","#B45309","#D97706","#F59E0B","#FCD34D","#9CA3AF"];
+
+
+// ══════════════════════════════════════════════════════════
+// TRADUCTIONS — données réelles extraites de l'application
+// ══════════════════════════════════════════════════════════
+
+// ── INTELLIGENCES MULTIPLES ──
+const IM_DETAILS = {
+  interpersonnelle: {
+    definition: `Il s'agit de l'aptitude à discerner l'humeur, le tempérament, la motivation et le désir des autres personnes et à y répondre correctement. Cette intelligence permet l'attachement et la création de liens.`,
+    metiers: ["Acteur","Ethnologue","Arbitre","Barman","Chef d'entreprise","Conseiller","Éducateur","Enseignant","Médiateur","Assistant social","Psychologue","Thérapeute","Animateur social","Auxiliaire de vie"]
+  },
+  intrapersonnelle: {
+    definition: `L'aptitude à accéder à ses propres sentiments et à reconnaître ses émotions, ses forces, ses faiblesses. C'est la connaissance de soi-même. La logique se mêle à l'intuition, à la compréhension de soi.`,
+    metiers: ["Chercheur","Conseiller en orientation","Consultant","Philosophe","Romancier","Thérapeute","Psychologue","Psychanalyste","Psychiatre","Designer de jeux vidéo","Cadre"]
+  },
+  spatiale: {
+    definition: `Une excellente perception des choses et de son environnement. L'aptitude à se repérer dans l'espace apparaît dès la petite enfance. Un peu plus tard s'ajoute « l'esprit de géométrie » et le sens de l'esthétisme.`,
+    metiers: ["Architecte","Artiste","Cartographe","Chirurgien","Cinéaste","Coiffeur","Décorateur","Designer","Géographe","Graphiste","Guide touristique","Ingénieur","Paysagiste","Pilote"]
+  },
+  musicale: {
+    definition: `L'aptitude à avoir le sens du rythme, à ressentir, capter et produire une tonalité et un timbre ; elle sous-tend l'appréciation des formes d'expression musicale. Ces personnes sont des auditifs purs.`,
+    metiers: ["Accordeur de piano","Chorégraphe","Danseur","Ingénieur du son","Musicien","Musicothérapeute","Chef d'orchestre","Chanteur","Compositeur","Imitateur","Bruiteur"]
+  },
+  ecologique: {
+    definition: `L'intelligence de base de l'être humain, celle qui lui a permis de survivre depuis toujours. L'aptitude à discerner l'organisation du vivant et à composer avec les conditions dans lesquelles il vit.`,
+    metiers: ["Agriculteur","Agronome","Anthropologue","Architecte-paysagiste","Botaniste","Biologiste","Chef cuisinier","Fleuriste","Jardinier","Météorologue","Vétérinaire","Zoologiste","Documentariste animalier"]
+  },
+  kinesthesique: {
+    definition: `La faculté d'apprendre et de penser à partir de toutes les perceptions de son corps. Ces personnes notent un bon équilibre entre le corps et l'esprit. Elles aiment le mouvement et utilisent tous leurs sens.`,
+    metiers: ["Acrobate","Acteur","Danseur","Athlète","Artisan","Chirurgien","Vétérinaire","Mécanicien","Menuisier","Kinésithérapeute","Pompier","Professeur d'éducation physique","Chef cuisinier"]
+  },
+  verbale: {
+    definition: `Une grande sensibilité aux sons, à la signification des mots et aux fonctions du langage. Ces individus sont souvent des amoureux de la langue et de grands lecteurs.`,
+    metiers: ["Animateur radio/TV","Acteur","Avocat","Écrivain","Éditeur","Historien","Journaliste","Négociateur","Politicien","Professeur","Traducteur","Vendeur","Attaché de presse"]
+  },
+  logique: {
+    definition: `Une grande sensibilité aux modèles logiques que l'on retrouve dans les sciences, les mathématiques, l'économie, le droit. Ces personnes excellent à soutenir des raisonnements solides et à analyser l'information.`,
+    metiers: ["Actuaire","Analyste","Avocat","Banquier","Comptable","Informaticien","Économiste","Ingénieur","Médecin","Pharmacien","Programmeur","Scientifique","Urbaniste","Géomètre"]
+  }
+};
+
+// ── SISEM — CROISEMENTS ──
+const SISEM_CROSSINGS = {
+  "AC-CQ": { label:"Coopérer – Secourir", description:"Agir solidairement avec d'autres personnes pour atteindre un objectif commun ou pour faire face à une situation d'urgence. L'accent est mis sur le plaisir d'agir en équipe et d'affronter les événements ensemble.", metiers:["Secouriste","Pompier","Agent de sécurité","Volontaire humanitaire","Travailleur social"] },
+  "CQ-RE": { label:"Entreprendre", description:"Se lancer dans un projet en entretenant des relations de pair à pair avec les personnes impliquées. L'accent est mis sur le plaisir de s'allier avec d'autres pour participer à une aventure commune.", metiers:["Chef de projet","Entrepreneur","Responsable de magasin","Franchisé","Directeur de startup"] },
+  "CQ-CR": { label:"Promouvoir", description:"Mettre une idée en pratique, œuvrer à un projet inédit, s'engager dans une activité en employant des procédés innovants. L'accent est mis sur le plaisir de mettre au point une nouvelle façon de faire.", metiers:["Vendeur ambulant","Chargé de marketing","Publiciste","Promoteur immobilier","Responsable de la publicité"] },
+  "CQ-EX": { label:"Défricher", description:"Évaluer rapidement la situation, décider de la conduite à tenir et ajuster ses actions. L'accent est mis sur le plaisir de trouver de façon expérimentale le fil conducteur qui mène à la solution.", metiers:["Technicien de maintenance","Consultant en innovation","Explorateur de données","Analyste de marché","Cartographe"] },
+  "CQ-CT": { label:"Exploiter – Produire", description:"Appliquer des méthodes de travail performantes pour tirer le meilleur parti des moyens. L'accent est mis sur le plaisir d'accroître l'efficience d'un dispositif ou d'une organisation.", metiers:["Ouvrier de production","Agriculteur","Technicien de maintenance","Responsable logistique","Opérateur de machine"] },
+  "AC-CT": { label:"Faciliter la vie", description:"Simplifier la tâche, alléger les contraintes, faire gagner du temps pour rendre l'existence plus commode. L'accent est mis sur le plaisir de rendre un service utile aux autres.", metiers:["Assistant administratif","Aide-soignant","Concierge","Employé de maison","Technicien support"] },
+  "CT-RE": { label:"Faire du business", description:"Négocier les termes d'un contrat qui respecte l'intérêt des parties prenantes. L'accent est mis sur le plaisir d'aboutir à un accord permettant de réaliser une « bonne » affaire.", metiers:["Représentant commercial","Agent immobilier","Responsable des ventes","Courtier","Directeur des achats"] },
+  "CR-CT": { label:"Modeler – Transformer", description:"Planifier et enchaîner les étapes d'un projet qui débouche sur une réalisation nouvelle. L'accent est mis sur le plaisir de façonner la réalité à partir d'éléments distincts initiaux.", metiers:["Artisan","Designer industriel","Architecte","Chef cuisinier","Ingénieur civil"] },
+  "CT-EX": { label:"Administrer – Gérer", description:"Déterminer et mettre en œuvre les mesures appropriées pour assurer la bonne marche d'un système ou d'une organisation. L'accent est mis sur le plaisir de fluidifier le fonctionnement d'un dispositif.", metiers:["Assistant de gestion","Gestionnaire de projet","Administrateur de systèmes","Responsable administratif","Gestionnaire de paie"] },
+  "AC-EX": { label:"Conseiller", description:"Écouter, analyser et comprendre les préoccupations d'une personne afin de la guider vers une solution adaptée. L'accent est mis sur le plaisir de résoudre une problématique en partageant ses connaissances.", metiers:["Conseiller en vente","Consultant RH","Conseiller d'orientation","Conseiller financier","Agent immobilier"] },
+  "EX-RE": { label:"Communiquer – Transmettre", description:"Échanger avec l'autre pour se faire le relais d'informations, d'idées ou de valeurs. L'accent est mis sur le plaisir de participer à la diffusion du savoir et/ou de la culture.", metiers:["Formateur en communication","Journaliste","Chargé de communication","Enseignant","Guide touristique"] },
+  "CR-EX": { label:"Concevoir", description:"Chercher et traiter des informations en vue d'élaborer une solution originale et « sur mesure » à une question. L'accent est mis sur le plaisir d'apporter une réponse personnalisée à une demande.", metiers:["Décorateur d'intérieur","Architecte paysagiste","Ingénieur R&D","Designer graphique","Urbaniste"] },
+  "AC-CR": { label:"Éveiller", description:"Susciter chez une personne un état d'ouverture en vue d'enrichir son expérience de perspectives nouvelles. L'accent est mis sur le plaisir d'amener l'autre à envisager la réalité sous un jour différent.", metiers:["Animateur socioculturel","Coach en développement","Professeur des écoles","Formateur professionnel","Thérapeute"] },
+  "CR-RE": { label:"Animer", description:"Susciter l'intérêt autour d'un thème qui met en valeur des personnes, des objets ou des lieux. L'accent est mis sur le plaisir de mettre en scène un événement qui raconte une histoire.", metiers:["Animateur de loisirs","Maître de cérémonie","Directeur artistique","Animateur radio","Organisateur d'événements"] },
+  "AC-RE": { label:"Favoriser la relation", description:"Créer du lien entre les personnes afin d'établir les conditions propices aux échanges et à la coopération. L'accent est mis sur le plaisir de mettre en contact des personnes pouvant s'apporter mutuellement.", metiers:["Animateur de réseau","Médiateur","Responsable des relations","Chargé d'accueil","Travailleur social"] }
+};
+
+function getCrossingData(a, b) {
+  const key = [a, b].sort().join('-');
+  return SISEM_CROSSINGS[key] || { label:"—", description:"", metiers:[] };
+}
+
+// ── RIASEC — TYPE DOMINANT ──
+const RIASEC_DOMINANT_TYPES = {
+  R: { title:"Type dominant : Réaliste", text:"Cette rubrique correspond au goût pour les activités concrètes, pratiques, qui nécessitent un travail manuel et une certaine dépense physique. Ces personnes préfèrent les métiers techniques, manuels, et le travail en plein air. Elles sont patientes, minutieuses, constantes, sensées, franches, pratiques, concrètes. Elles aiment apprendre et travailler avec des machines et du matériel." },
+  I: { title:"Type dominant : Investigateur", text:"Cette rubrique correspond au goût pour les activités intellectuelles, le monde des idées, la recherche de connaissances et les théories scientifiques. Ces personnes sont plutôt réservées, indépendantes, manifestent une grande curiosité intellectuelle et possèdent des aptitudes scientifiques. Elles cherchent à utiliser leurs aptitudes analytiques ou théoriques pour résoudre les problèmes." },
+  A: { title:"Type dominant : Artistique", text:"Cette rubrique correspond au goût pour les arts et toutes les activités qui autorisent une libre expression de soi : créer, imaginer, jouer la comédie, décorer, écrire. Ces personnes sont spontanées, expressives, imaginatives, émotives, indépendantes, originales, intuitives, passionnées. Elles n'apprécient pas un environnement trop structuré." },
+  S: { title:"Type dominant : Social", text:"Ces personnes sont souvent coopératives, généreuses, altruistes, idéalistes et optimistes. Elles aiment être en contact avec les autres dans le but de les aider, de les informer, de les éduquer, de les soigner. Elles sont attentives, compréhensives, dévouées, sensibles, sympathiques, bienveillantes et encourageantes." },
+  E: { title:"Type dominant : Entreprenant", text:"Ces personnes sont énergiques, ambitieuses et rapides. Elles apprécient le pouvoir et sont persuasives. Elles cherchent à utiliser leur aptitude à persuader et à organiser pour se mettre en avant ou pour promouvoir leurs projets. Elles mesurent le succès en termes de qualité, de prestige et de statut social." },
+  C: { title:"Type dominant : Conventionnel", text:"Ces personnes ont une préférence pour les activités précises, méthodiques, axées sur un résultat et recherchent les situations où les structures sont bien définies. Elles sont ordonnées, minutieuses, organisées, efficaces, de confiance, stables, précises, prudentes, consciencieuses et méthodiques." }
+};
+
+// ── RIASEC — DOMAINES PAR LETTRE DOMINANTE ──
+const RIASEC_DOMAINS = {
+  R: ["Métiers en contact avec les animaux (éleveur, soigneur, toiletteur, vétérinaire…)","Métiers de l'environnement (garde forestier, écologiste, éco-conseiller, jardinier…)","Métiers de la sécurité (pompier, policier, militaire, agent de sécurité…)","Métiers du bâtiment (plombier, menuisier, maçon, électricien, peintre…)","Métiers de la mécanique (mécanicien auto, technicien de maintenance, électromécanicien…)","Métiers des transports (chauffeur, pilote, conducteur de bus, facteur…)"],
+  I: ["Métiers scientifiques (chercheur, biologiste, chimiste, physicien, météorologue…)","Métiers médicaux (médecin, chirurgien, pharmacien, dentiste, vétérinaire…)","Métiers paramédicaux (infirmier, kinésithérapeute, ergothérapeute, podologue…)","Métiers de l'informatique (ingénieur, développeur, analyste, technicien…)","Sciences humaines (anthropologue, psychologue, sociologue, géographe…)"],
+  A: ["Métiers musicaux (musicien, compositeur, ingénieur du son, chef d'orchestre…)","Métiers du spectacle (acteur, danseur, metteur en scène, réalisateur…)","Arts graphiques et design (graphiste, illustrateur, designer, infographiste…)","Mode et esthétique (styliste, coiffeur, maquilleur, esthéticien…)","Littérature et édition (écrivain, journaliste, éditeur, traducteur, bibliothécaire…)","Architecture et décoration (architecte, décorateur d'intérieur, urbaniste…)"],
+  S: ["Aide sociale et soutien (psychologue, éducateur spécialisé, assistant social…)","Enseignement et formation (instituteur, professeur, formateur, conseiller pédagogique…)","Animation et éducation (animateur socioculturel, éducateur de jeunes enfants…)","Soins et santé relationnelle (infirmier, aide-soignant, orthophoniste…)"],
+  E: ["Commerce et vente (vendeur, agent immobilier, chef de produit, commercial…)","Direction et management (chef d'entreprise, directeur, responsable marketing…)","Droit et politique (avocat, juge, notaire, ministre, député…)","Relations publiques (attaché de presse, diplomate, hôtesse, conférencier…)"],
+  C: ["Comptabilité et finance (comptable, expert-comptable, analyste financier, fiscaliste…)","Banque et assurance (directeur d'agence, courtier, agent d'assurance…)","Informatique de gestion (analyste-système, statisticien, ingénieur informatique…)","Administration (secrétaire, technicien de bureau, directeur administratif…)"]
+};
+
+// ── RIASEC — PROFILS COMBINÉS 2 LETTRES ──
+const RIASEC_PROFILES_2 = {
+  "RI": { title:"Profil R-I", text:"Ces personnes préfèrent réaliser des travaux concrets qui leur permettent d'obtenir des résultats tangibles. Elles sont douées pour résoudre des problèmes techniques car en plus d'être habiles de leurs mains, elles cherchent à comprendre les mécanismes des choses. Elles ont le souci du détail et de la précision.", metiers:["Technicien de laboratoire","Mécanicien d'aéronefs","Ingénieur mécanique","Technologue médical","Pilote d'avion","Ingénieur civil"] },
+  "IR": { title:"Profil I-R", text:"Ces personnes sont généralement intéressées par les problèmes complexes relatifs aux phénomènes observables et au fonctionnement des objets. Elles préfèrent agir concrètement, expérimenter et utiliser des outils pour obtenir le résultat recherché. Des disciplines comme les sciences expérimentales, la haute technologie ou l'ingénierie leur conviennent.", metiers:["Ingénieur physicien","Biologiste","Technologue en microbiologie","Médecin légiste","Agronome","Météorologue"] },
+  "RA": { title:"Profil R-A", text:"Ces personnes sont attirées par les réalisations concrètes qui font appel à la fois à leur dextérité manuelle et à leur goût pour la création. Elles imaginent facilement des formes à partir d'un plan. Elles travaillent avec minutie en se souciant du détail et de l'esthétique.", metiers:["Ébéniste","Luthier","Bijoutier","Artisan tisserand","Maroquinier","Restaurateur de meubles"] },
+  "AR": { title:"Profil A-R", text:"Ces personnes s'intéressent aux activités concrètes qui font appel à leur sens esthétique et à leur goût pour la création, particulièrement dans la conception d'objets ou d'environnements. Elles sont habiles à se servir d'outils et de matériaux pour fabriquer les produits de leur imagination.", metiers:["Sculpteur","Céramiste","Tailleur de pierre","Restaurateur d'objets","Artisan créateur"] },
+  "RS": { title:"Profil R-S", text:"Ces personnes ont une préférence pour un travail concret qui leur permet aussi d'être en contact avec les gens ou de rendre service. Elles ont de la facilité à s'exprimer et s'intègrent bien dans une équipe de travail. Elles donnent volontiers de l'aide et aiment enseigner leur savoir-faire.", metiers:["Kinésithérapeute","Ergothérapeute","Technicien médical","Musicothérapeute","Zoothérapeute"] },
+  "SR": { title:"Profil S-R", text:"Ces personnes recherchent les occasions d'être en relation avec les autres dans le cadre d'activités concrètes. Elles sont souvent douées pour les sports qui leur permettent de satisfaire leur besoin de contacts sociaux. Elles peuvent aussi apprécier les professions de service dans lesquelles elles s'occupent concrètement d'autres personnes.", metiers:["Ergothérapeute","Entraîneur sportif","Aide-éducateur en garderie","Aide familial","Gouvernant","Préposé aux bénéficiaires"] },
+  "RE": { title:"Profil R-E", text:"Ces personnes ont une préférence pour les réalisations concrètes et les tâches techniques qui requièrent de la dextérité, mais elles ont aussi besoin d'agir efficacement et productiblement. Énergiques et douées d'un certain leadership, elles peuvent diriger des projets dans un domaine d'activités concret.", metiers:["Chef de chantier","Artisan entrepreneur","Exploitant agricole","Directeur technique","Pompier","Policier"] },
+  "ER": { title:"Profil E-R", text:"Ces personnes recherchent les occasions de prendre les choses en charge pour réaliser des tâches concrètes. Elles font preuve d'un grand sens de l'organisation pratique pour atteindre leurs buts ou diriger une équipe de travail dans un domaine matériel (fabrication, réparation, transport).", metiers:["Entrepreneur en travaux","Chef des opérations","Garagiste","Contremaître","Conducteur de travaux"] },
+  "RC": { title:"Profil R-C", text:"Ces personnes ont une préférence pour les tâches concrètes clairement définies qui nécessitent l'usage méthodique de machines ou d'outils. Elles sont bien organisées, précises, minutieuses et efficaces dans la mesure où leur travail s'effectue selon des procédures bien établies.", metiers:["Technicien qualité","Conducteur de machines","Opérateur de production","Assembleur","Électricien"] },
+  "CR": { title:"Profil C-R", text:"Ces personnes ont une préférence pour les tâches bien définies, méthodiques, encadrées par des procédures précises. Elles sont plus à l'aise dans un travail concret avec des objets que dans un travail sur des idées abstraites. Douées d'une bonne dextérité, elles sont habiles à se servir de machines pour exécuter un travail précis.", metiers:["Caissier d'institution","Commis au classement","Commis de supermarché","Opérateur de saisie","Préposé à l'emballage"] },
+  "IS": { title:"Profil I-S", text:"Ces personnes sont de nature intellectuelle et curieuse tout en recherchant le contact avec autrui. Attirées par les activités permettant d'appliquer leurs connaissances pour résoudre des problèmes, elles ont de la facilité à entretenir des relations significatives et cherchent à comprendre les besoins des gens.", metiers:["Médecin","Psychologue","Infirmier","Pharmacien","Orthophoniste","Audiologiste","Chiropraticien"] },
+  "SI": { title:"Profil S-I", text:"Ces personnes sont attirées par les professions permettant de répondre aux besoins d'aide physique ou psychologique des gens, avec un défi intellectuel. Elles sont perspicaces, bienveillantes et dévouées, et cherchent à appuyer leur intervention sur une analyse objective des faits.", metiers:["Infirmier","Travailleur social","Physiothérapeute","Bibliothécaire","Médecin généraliste","Éducateur spécialisé"] },
+  "IA": { title:"Profil I-A", text:"Ces personnes aiment jouer avec les idées, résoudre des problèmes et comprendre des phénomènes. Elles appuient leurs réflexions tantôt sur un raisonnement logique, tantôt sur une approche intuitive comparable au processus de création artistique. Curieuses et d'esprit indépendant, elles s'engagent dans des voies nouvelles.", metiers:["Anthropologue","Linguiste","Économiste","Architecte","Traducteur","Musicologue","Ethnologue"] },
+  "AI": { title:"Profil A-I", text:"Ces personnes sont attirées par les activités qui font appel à leur imagination créatrice et qui comportent un certain défi intellectuel. Souvent douées pour concevoir des produits ou idées originaux qui permettront de résoudre un problème de façon innovatrice.", metiers:["Architecte","Designer UX","Chercheur en arts","Compositeur","Auteur de jeux vidéo","Concepteur d'expositions"] },
+  "IE": { title:"Profil I-E", text:"Ces personnes ont des intérêts complémentaires : analytiques d'une part, et énergiques et ambitieuses d'autre part. Ces tendances s'avèrent complémentaires dans des fonctions comme la direction de programmes de recherche ou la gestion de projets scientifiques.", metiers:["Pharmacien","Directeur R&D","Ergonomiste","Consultant expert","Sage-femme","Actuaire","Archiviste"] },
+  "EI": { title:"Profil E-I", text:"Ces personnes ont l'ambition et l'audace des gens d'affaires en même temps que la capacité d'analyse et la rigueur logique des chercheurs scientifiques. Elles ont de la facilité à monter et diriger des projets dans lesquels il faut résoudre des problèmes en appliquant des stratégies bien planifiées.", metiers:["Agronome","Expert-conseil en informatique","Représentant pharmaceutique","Inspecteur municipal","Directeur commercial expert"] },
+  "AS": { title:"Profil A-S", text:"Ces personnes ont besoin d'exprimer leur personnalité imaginative tout en ayant l'occasion de partager des moments d'émotion avec leur entourage. Sensibles et dévouées, elles ont de la facilité à communiquer leurs idées et leurs sentiments tout en étant attentives aux autres.", metiers:["Professeur d'arts","Professeur de musique","Art-thérapeute","Animateur culturel","Musicothérapeute","Éducateur en garderie"] },
+  "SA": { title:"Profil S-A", text:"Ces personnes ont une préférence pour les activités permettant d'être utiles aux autres en offrant un soutien d'ordre culturel ou éducatif. Sensibles et dévouées, elles s'engagent volontiers dans un travail d'équipe faisant appel à leur créativité.", metiers:["Enseignant au primaire","Orthopédagogue","Éducateur en garderie","Coiffeur styliste","Esthéticien","Infirmier auxiliaire"] },
+  "AE": { title:"Profil A-E", text:"Ces personnes ont une préférence pour les activités d'expression artistique qui sollicitent leur talent créatif. Elles jouissent d'un esprit d'entreprise et d'un sens de la planification. Elles ont de la facilité à vendre leurs idées et sont actives, énergiques, ne craignant pas de prendre des risques calculés.", metiers:["Directeur artistique","Producteur cinéma/TV","Réalisateur","Chorégraphe","Chef du service de promotion","Directeur de la publicité"] },
+  "EA": { title:"Profil E-A", text:"Ces personnes sont dynamiques dont l'enthousiasme est communicatif. Elles recherchent les responsabilités, ne craignent pas de prendre des risques et défendent leurs convictions avec énergie. Elles apprécient les idées originales et innovantes.", metiers:["Animateur radio/TV","Avocat","Notaire","Juge","Attaché de presse","Conseiller juridique"] },
+  "SE": { title:"Profil S-E", text:"Ces personnes éprouvent le besoin d'être en contact actif avec les autres dans le but de leur être utiles. Elles possèdent un esprit d'entreprise et un enthousiasme communicatif. Elles sont souvent des leaders efficaces capables de prendre des responsabilités.", metiers:["Conseiller d'orientation","Directeur d'école","Responsable RH","Sexologue","Médiateur","Animateur de vie étudiante"] },
+  "ES": { title:"Profil E-S", text:"Ces personnes sont attirées par les activités permettant d'exercer de l'influence sur les autres. Sûres d'elles-mêmes, optimistes et convaincantes, les gens s'en remettent volontairement à elles. Elles prennent facilement le leadership dans un groupe.", metiers:["Agent d'assurances","Directeur des ressources humaines","Directeur des ventes","Chef cuisinier","Directeur commercial","Gérant de commerce"] },
+  "IC": { title:"Profil I-C", text:"Ces personnes sont attirées par les activités sollicitant leur capacité d'analyse sans avoir à faire preuve de créativité pour des solutions innovatrices. Elles ont un sens développé de l'observation, un esprit logique et un souci de l'exactitude.", metiers:["Conseiller pédagogique","Spécialiste en évaluation","Coroner","Actuaire","Analyste en gestion"] },
+  "CI": { title:"Profil C-I", text:"Ces personnes recherchent les occasions de mettre à profit leur souci de l'ordre dans un contexte convenant à leur côté investigateur. Elles sont habiles à découvrir ce qui cloche dans un ensemble de données car elles ont le sens de l'observation et de l'analyse.", metiers:["Vérificateur des impôts","Analyste en gestion","Commis de bourse","Technicien en statistiques","Agent-conseil de crédit"] },
+  "EC": { title:"Profil E-C", text:"Ces personnes font preuve d'initiative et ne craignent pas les responsabilités. Douées d'un certain talent de persuasion, elles défendent leurs opinions avec énergie et ont de l'influence sur leur entourage. Elles sont efficaces dans des tâches de bureau ou de service commercial laissant place à l'initiative.", metiers:["Comptable d'entreprise","Directeur financier","Responsable administratif","Chef pâtissier","Coordonnateur de production","Fiscaliste"] },
+  "CE": { title:"Profil C-E", text:"Ces personnes aiment prendre leurs propres décisions dans un cadre bien défini. Elles sont efficaces dans des tâches régulières de bureau ou de service commercial qui requièrent un bon sens de la planification et qui laissent place à l'initiative.", metiers:["Analyste financier","Comptable","Secrétaire de direction","Adjoint administratif","Conseiller en voyages","Réceptionniste"] },
+  "CS": { title:"Profil C-S", text:"Ces personnes préfèrent accomplir des tâches clairement définies dans un contexte leur permettant d'être en contact avec les gens. Elles sont habiles à enregistrer et classer des données selon des règles systématiques. Ce sont des personnes ordonnées, efficaces et consciencieuses.", metiers:["Secrétaire médicale","Secrétaire juridique","Caissier","Bibliothécaire","Teneur de livres","Commis d'assurances"] },
+  "SC": { title:"Profil S-C", text:"Ces personnes éprouvent le besoin d'entretenir des relations étroites avec des gens en exerçant une profession de services dont les tâches sont régulières et bien définies. Ce sont des personnes attentives, bienveillantes et coopératives qui se montrent efficaces et ordonnées dans leur travail.", metiers:["Préposé aux dossiers médicaux","Caissier d'institution financière","Agent d'accueil","Commis au classement","Secrétaire"] },
+  "AC": { title:"Profil A-C", text:"Ces personnes s'intéressent au travail de création en se préoccupant de l'ordre et de la bonne organisation matérielle de leur environnement. D'esprit indépendant, elles sont à l'aise dans des situations qui sortent de l'ordinaire, dotées de sensibilité, d'imagination et de spontanéité.", metiers:["Graphiste technique","Maquettiste","Rédacteur technique","Éditeur","Correcteur d'épreuves"] },
+  "CA": { title:"Profil C-A", text:"Ces personnes ont une préférence pour les activités précises et méthodiques centrées sur leur sensibilité et leur intuition. Elles se soucient de l'ordre et de la bonne organisation matérielle. Elles peuvent le cas échéant, sortir des sentiers battus.", metiers:["Graphiste","Webdesigner","Maquettiste","Rédacteur publicitaire","Imprimeur typographe"] }
+};
+
+function getProfileKey2(l1, l2) {
+  return l1 + l2;
+}
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let state = {
+  participant: { prenom:'', nom:'', date:'' },
+  tests: {
+    t1: { done:false, checked:new Set(), scores:{} },
+    t2: { done:false, answers:{}, scores:{}, topMotors:[] },
+    t3: { done:false, activities:[] },
+    t4: { done:false, reponses:{} },
+    t5: { done:false,
+      q1:{ selectedIds:[], ranked:[], done:false, scores:{} },
+      q2:{ selectedIds:[], done:false, scores:{} },
+      q3:{ selectedIds:[], done:false, scores:{} },
+      q4:{ selectedIds:[], done:false, scores:{}, total:{}, top3:[] }
+    }
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0,0);
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = ['t1','t2','t3','t4','t5'].filter(k => state.tests[k].done).length;
+  document.getElementById('globalProgress').style.width = (done/5*100) + '%';
+}
+
+function goToTestList() {
+  renderTestList();
+  showScreen('testlist');
+}
+
+// ══════════════════════════════════════════════════════════
+// WELCOME
+// ══════════════════════════════════════════════════════════
+function startTests() {
+  const prenom = document.getElementById('inputPrenom').value.trim();
+  const nom = document.getElementById('inputNom').value.trim();
+  if (!prenom || !nom) {
+    alert('Veuillez saisir votre prénom et votre nom.');
+    return;
+  }
+  const code = generateCode(prenom);
+  state.participant = { prenom, nom, date: document.getElementById('inputDate').value, code };
+  document.getElementById('headerName').textContent = prenom + ' ' + nom;
+  document.getElementById('displayCode').textContent = code;
+  saveLocal();
+  renderTestList();
+  showScreen('testlist');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST LIST
+// ══════════════════════════════════════════════════════════
+const TEST_DEFS = [
+  { key:'t1', title:'Intelligences multiples', desc:'80 phrases — cochez celles qui vous ressemblent', icon:'🧠', color:'#FFF7ED', screen:'t1' },
+  { key:'t2', title:'SISEM — Mes moteurs', desc:'45 paires A/B — choisissez la plus attirante', icon:'⚡', color:'#EFF6FF', screen:'t2' },
+  { key:'t3', title:'Les activités que j\'aime', desc:'Listez librement vos activités favorites', icon:'🌟', color:'#F0FDF4', screen:'t3' },
+  { key:'t4', title:'Le métier de mes rêves', desc:'4 questions ouvertes sur vos aspirations', icon:'✨', color:'#FDF4FF', screen:'t4' },
+  { key:'t5', title:'IMIC / RIASEC', desc:'4 questionnaires — image de soi, motivations, savoir-faire, savoir-être', icon:'🎯', color:'#FEF2F2', screen:'t5q1' }
+];
+
+function renderTestList() {
+  const allDone = ['t1','t2','t3','t4','t5'].every(k => state.tests[k].done);
+  document.getElementById('allDoneSection').style.display = allDone ? 'block' : 'none';
+
+  const container = document.getElementById('testCards');
+  container.innerHTML = '';
+  TEST_DEFS.forEach((def, idx) => {
+    const isDone = state.tests[def.key].done;
+    const card = document.createElement('div');
+    card.className = 'test-card' + (isDone ? ' completed' : '');
+    card.innerHTML = `
+      <div class="test-card-icon" style="background:${def.color};">${def.icon}</div>
+      <div class="test-card-info">
+        <div class="test-card-title">${def.title}</div>
+        <div class="test-card-desc">${def.desc}</div>
+      </div>
+      <span class="test-card-status ${isDone ? 'status-done' : 'status-todo'}">${isDone ? '✓ Terminé' : 'À faire'}</span>
+    `;
+    if (!isDone) {
+      card.style.cursor = 'pointer';
+      card.onclick = () => launchTest(def);
+    } else {
+      card.style.cursor = 'default';
+    }
+    container.appendChild(card);
+  });
+}
+
+function launchTest(def) {
+  if (def.screen === 't1') initT1();
+  else if (def.screen === 't2') initT2();
+  else if (def.screen === 't3') initT3();
+  else if (def.screen === 't4') initT4();
+  else if (def.screen === 't5q1') initT5Q1();
+  showScreen(def.screen);
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 1 — INTELLIGENCES MULTIPLES
+// ══════════════════════════════════════════════════════════
+function initT1() {
+  const container = document.getElementById('t1Questions');
+  container.innerHTML = '';
+  IM_QUESTIONS.forEach((q, i) => {
+    const qNum = i + 1;
+    if (i > 0 && i % 10 === 0) {
+      const sep = document.createElement('div');
+      sep.className = 'section-sep';
+      sep.innerHTML = `<span>Questions ${i+1}–${Math.min(i+10, 80)}</span>`;
+      container.appendChild(sep);
+    }
+    const item = document.createElement('label');
+    item.className = 'checkbox-item' + (state.tests.t1.checked.has(qNum) ? ' checked' : '');
+    item.innerHTML = `
+      <div class="custom-checkbox"></div>
+      <span class="checkbox-text"><span class="q-num">${qNum}.</span>${q}</span>
+    `;
+    item.onclick = () => toggleT1(qNum, item);
+    container.appendChild(item);
+  });
+  updateT1Counter();
+}
+
+function toggleT1(qNum, item) {
+  if (state.tests.t1.checked.has(qNum)) {
+    state.tests.t1.checked.delete(qNum);
+    item.classList.remove('checked');
+  } else {
+    state.tests.t1.checked.add(qNum);
+    item.classList.add('checked');
+  }
+  updateT1Counter();
+}
+
+function updateT1Counter() {
+  const count = state.tests.t1.checked.size;
+  document.getElementById('t1Count').textContent = count;
+  document.getElementById('t1Submit').disabled = count === 0;
+}
+
+function submitT1() {
+  const scores = {};
+  for (const [cat, qNums] of Object.entries(IM_SCORING)) {
+    scores[cat] = qNums.filter(q => state.tests.t1.checked.has(q)).length;
+  }
+  state.tests.t1.scores = scores;
+  state.tests.t1.done = true;
+  saveLocal();
+  saveToSheet('t1');
+
+  // Render results
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const maxScore = sorted[0][1];
+  const top = sorted.filter(([,v]) => v === maxScore).map(([k]) => k);
+  const topDisplay = top.length === 1 ? [top[0], sorted[1][0]] : top;
+
+  let html = `<h3>🧠 Vos intelligences dominantes</h3>`;
+  html += `<div style="margin-bottom:1.25rem;">`;
+  topDisplay.forEach((cat, i) => {
+    html += `<span class="top-badge" style="background:${IM_COLORS[i]}22;color:${IM_COLORS[i]};border:1px solid ${IM_COLORS[i]}44;">`;
+    html += `⭐ ${IM_LABELS[cat]} (${scores[cat]}/10)</span>`;
+  });
+  html += `</div>`;
+  sorted.forEach(([cat, val], i) => {
+    const isTop = topDisplay.includes(cat);
+    html += `<div class="score-bar-wrap">
+      <div class="score-bar-label">
+        <span style="font-weight:${isTop?700:400}">${IM_LABELS[cat]}</span>
+        <span class="score-val" style="color:${IM_COLORS[i]}">${val}/10</span>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-fill" style="width:${val/10*100}%;background:${IM_COLORS[i]};opacity:${isTop?1:0.5}"></div>
+      </div>
+    </div>`;
+  });
+  // Traduction top 2
+  html += `<div style="margin-top:1.5rem;border-top:1px solid #E5E7EB;padding-top:1.25rem;">
+    <h3 style="margin-bottom:1rem;">📖 Ce que cela signifie pour vous</h3>`;
+  topDisplay.slice(0,2).forEach((cat, i) => {
+    const desc = IM_DETAILS[cat];
+    if (!desc) return;
+    html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:1rem;margin-bottom:0.5rem;color:${IM_COLORS[i]}">⭐ Intelligence ${IM_LABELS[cat]}</div>
+      <p style="font-size:0.875rem;color:#374151;margin-bottom:0.875rem;line-height:1.65;">${desc.definition}</p>
+      <div style="font-size:0.8rem;font-weight:700;color:#6B7280;margin-bottom:0.5rem;">💼 Exemples de métiers :</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+        ${desc.metiers.map(m => `<span style="background:${IM_COLORS[i]}18;color:${IM_COLORS[i]};border:1px solid ${IM_COLORS[i]}33;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:500;">${m}</span>`).join('')}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('t1Results').innerHTML = html;
+  showScreen('t1r');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 2 — SISEM
+// ══════════════════════════════════════════════════════════
+function initT2() {
+  const container = document.getElementById('t2Pairs');
+  container.innerHTML = '';
+  SISEM_PAIRS.forEach((pair, i) => {
+    const card = document.createElement('div');
+    card.className = 'pair-card';
+    card.innerHTML = `
+      <div class="pair-num">Paire ${i+1} / ${SISEM_PAIRS.length}</div>
+      <div class="pair-options">
+        <button class="pair-btn ${state.tests.t2.answers[i]===pair[0].code?'chosen':''}" onclick="chooseT2(${i},'${pair[0].code}')">
+          <span class="pair-label">A)</span>${pair[0].text}
+        </button>
+        <button class="pair-btn ${state.tests.t2.answers[i]===pair[1].code?'chosen':''}" onclick="chooseT2(${i},'${pair[1].code}')">
+          <span class="pair-label">B)</span>${pair[1].text}
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateT2Counter();
+}
+
+function chooseT2(pairIdx, code) {
+  state.tests.t2.answers[pairIdx] = code;
+  const card = document.querySelectorAll('.pair-card')[pairIdx];
+  card.querySelectorAll('.pair-btn').forEach(btn => btn.classList.remove('chosen'));
+  const pair = SISEM_PAIRS[pairIdx];
+  const btnIdx = pair[0].code === code ? 0 : 1;
+  card.querySelectorAll('.pair-btn')[btnIdx].classList.add('chosen');
+  updateT2Counter();
+}
+
+function updateT2Counter() {
+  const count = Object.keys(state.tests.t2.answers).length;
+  document.getElementById('t2Count').textContent = count;
+  document.getElementById('t2Submit').disabled = count < SISEM_PAIRS.length;
+}
+
+function submitT2() {
+  const scores = {CQ:0,CT:0,EX:0,CR:0,RE:0,AC:0};
+  Object.values(state.tests.t2.answers).forEach(code => { if (scores[code]!==undefined) scores[code]++; });
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const top3 = sorted.slice(0,3).map(([k]) => k);
+  state.tests.t2.scores = scores; state.tests.t2.topMotors = top3; state.tests.t2.done = true;
+  saveLocal();
+  saveToSheet('t2');
+
+  function cross(a,b) { const key=[a,b].sort().join('-'); return SISEM_CROSSING[key]||'—'; }
+
+  let html = `<h3>⚡ Vos moteurs de motivation</h3>`;
+  html += `<div style="margin-bottom:1rem;">`;
+  top3.forEach((code,i) => {
+    html += `<span class="top-badge" style="background:${SISEM_COLORS[code]}22;color:${SISEM_COLORS[code]};border:1px solid ${SISEM_COLORS[code]}44;">
+      ${i+1}. ${SISEM_LABELS[code]} (${scores[code]})</span>`;
+  });
+  html += `</div>`;
+  sorted.forEach(([code, val]) => {
+    const isTop = top3.includes(code);
+    html += `<div class="score-bar-wrap">
+      <div class="score-bar-label">
+        <span style="font-weight:${isTop?700:400}">${SISEM_LABELS[code]}</span>
+        <span class="score-val" style="color:${SISEM_COLORS[code]}">${val}/15</span>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-fill" style="width:${val/15*100}%;background:${SISEM_COLORS[code]};opacity:${isTop?1:0.45}"></div>
+      </div>
+    </div>`;
+  });
+  html += `<div style="margin-top:1.25rem;"><h3 style="margin-bottom:0.75rem;">3 activités professionnelles à explorer</h3>`;
+  [[0,1],[0,2],[1,2]].forEach(([a,b], i) => {
+    const actData = getCrossingData(top3[a], top3[b]);
+    html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.1rem;margin-bottom:0.875rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;">
+        <span style="width:28px;height:28px;background:#F97316;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-shrink:0;">${i+1}</span>
+        <div>
+          <div style="font-weight:700;font-size:0.95rem;">${actData.label}</div>
+          <div style="font-size:0.75rem;color:#6B7280;">${SISEM_LABELS[top3[a]]} + ${SISEM_LABELS[top3[b]]}</div>
+        </div>
+      </div>
+      <p style="font-size:0.875rem;color:#374151;margin-bottom:0.75rem;line-height:1.65;">${actData.description}</p>
+      ${actData.metiers.length > 0 ? `<div style="font-size:0.8rem;font-weight:700;color:#6B7280;margin-bottom:0.5rem;">💼 Exemples de métiers :</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+        ${actData.metiers.map(m => '<span style="background:#F9731618;color:#EA580C;border:1px solid #F9731633;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:500;">'+m+'</span>').join('')}
+      </div>` : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('t2Results').innerHTML = html;
+  showScreen('t2r');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 3 — ACTIVITÉS
+// ══════════════════════════════════════════════════════════
+let activityCount = 1;
+function initT3() {
+  if (state.tests.t3.activities.length === 0) {
+    state.tests.t3.activities = [{ activite:'', motsCles:'' }];
+  }
+  renderActivities();
+}
+
+function renderActivities() {
+  const container = document.getElementById('t3Activities');
+  container.innerHTML = '';
+  state.tests.t3.activities.forEach((act, i) => {
+    const div = document.createElement('div');
+    div.className = 'activity-entry';
+    div.innerHTML = `
+      <div class="activity-entry-header">
+        <span class="activity-label">🌟 Activité ${i+1}</span>
+        ${state.tests.t3.activities.length > 1 ? `<button class="btn-remove" onclick="removeActivity(${i})">✕ Supprimer</button>` : ''}
+      </div>
+      <div class="form-group" style="margin-bottom:0.875rem;">
+        <label>Activité</label>
+        <input type="text" placeholder='ex: "Jardinage", "Jouer de la musique"' value="${act.activite}"
+          oninput="updateActivity(${i},'activite',this.value)">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Mots-clés associés</label>
+        <input type="text" placeholder='ex: "nature, calme, créer"' value="${act.motsCles}"
+          oninput="updateActivity(${i},'motsCles',this.value)">
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function addActivity() {
+  state.tests.t3.activities.push({ activite:'', motsCles:'' });
+  renderActivities();
+}
+function removeActivity(i) {
+  state.tests.t3.activities.splice(i,1);
+  renderActivities();
+}
+function updateActivity(i, field, val) {
+  state.tests.t3.activities[i][field] = val;
+}
+function submitT3() {
+  const filled = state.tests.t3.activities.filter(a => a.activite.trim() !== '');
+  if (filled.length === 0) { alert('Ajoutez au moins une activité.'); return; }
+  state.tests.t3.done = true;
+  saveLocal();
+  saveToSheet('t3');
+  goToTestList();
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 4 — MÉTIER DE MES RÊVES
+// ══════════════════════════════════════════════════════════
+function initT4() {
+  const r = state.tests.t4.reponses;
+  document.getElementById('t4q1').value = r.metier_reve || '';
+  document.getElementById('t4q2').value = r.secteur_ideal || '';
+  document.getElementById('t4q3').value = r.motivations || '';
+  document.getElementById('t4q4').value = r.environnement_travail || '';
+}
+function submitT4() {
+  const r = {
+    metier_reve: document.getElementById('t4q1').value.trim(),
+    secteur_ideal: document.getElementById('t4q2').value.trim(),
+    motivations: document.getElementById('t4q3').value.trim(),
+    environnement_travail: document.getElementById('t4q4').value.trim()
+  };
+  if (!r.metier_reve && !r.secteur_ideal && !r.motivations && !r.environnement_travail) {
+    alert('Veuillez remplir au moins une question.'); return;
+  }
+  state.tests.t4.reponses = r;
+  state.tests.t4.done = true;
+  saveLocal();
+  saveToSheet('t4');
+  goToTestList();
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 5 — IMIC Q1 : IMAGE DE SOI
+// ══════════════════════════════════════════════════════════
+function initT5Q1() {
+  const container = document.getElementById('t5q1Phrases');
+  container.innerHTML = '';
+  IMIC_Q1_PHRASES.forEach(phrase => {
+    const item = document.createElement('label');
+    const isSel = state.tests.t5.q1.selectedIds.includes(phrase.id);
+    const maxed = state.tests.t5.q1.selectedIds.length >= 6;
+    item.className = 'checkbox-item' + (isSel?' checked':'') + (!isSel&&maxed?' disabled':'');
+    item.innerHTML = `<div class="custom-checkbox"></div><span class="checkbox-text">${phrase.text}</span>`;
+    item.onclick = () => {
+      if (!isSel && state.tests.t5.q1.selectedIds.length >= 6) return;
+      toggleT5Q1(phrase.id);
+    };
+    container.appendChild(item);
+  });
+  updateT5Q1Counter();
+  document.getElementById('t5q1SelectSection').style.display = 'block';
+  document.getElementById('t5q1RankSection').style.display = 'none';
+}
+
+function toggleT5Q1(id) {
+  const sel = state.tests.t5.q1.selectedIds;
+  const idx = sel.indexOf(id);
+  if (idx >= 0) sel.splice(idx,1); else if (sel.length < 6) sel.push(id);
+  initT5Q1();
+}
+
+function updateT5Q1Counter() {
+  const count = state.tests.t5.q1.selectedIds.length;
+  document.getElementById('t5q1Count').textContent = count;
+  const btn = document.getElementById('t5q1NextBtn');
+  btn.disabled = count !== 6;
+  const items = document.querySelectorAll('#t5q1Phrases .checkbox-item');
+  items.forEach((item, i) => {
+    const id = IMIC_Q1_PHRASES[i].id;
+    const isSel = state.tests.t5.q1.selectedIds.includes(id);
+    item.classList.toggle('disabled', !isSel && count >= 6);
+  });
+}
+
+function goToRanking() {
+  state.tests.t5.q1.ranked = [...state.tests.t5.q1.selectedIds];
+  renderRanking();
+  document.getElementById('t5q1SelectSection').style.display = 'none';
+  document.getElementById('t5q1RankSection').style.display = 'block';
+}
+
+function backToSelect() {
+  document.getElementById('t5q1SelectSection').style.display = 'block';
+  document.getElementById('t5q1RankSection').style.display = 'none';
+}
+
+function renderRanking() {
+  const container = document.getElementById('t5q1Ranking');
+  container.innerHTML = '';
+  state.tests.t5.q1.ranked.forEach((id, index) => {
+    const phrase = IMIC_Q1_PHRASES.find(p => p.id === id);
+    const item = document.createElement('div');
+    item.className = 'rank-item';
+    item.innerHTML = `
+      <div class="rank-num" style="background:${RANK_BG[index]}">${index+1}</div>
+      <p class="rank-text">${phrase.text}</p>
+      <div class="rank-arrows">
+        <button class="rank-arrow" ${index===0?'disabled':''} onclick="moveRank(${index},-1)">↑</button>
+        <button class="rank-arrow" ${index===5?'disabled':''} onclick="moveRank(${index},1)">↓</button>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function moveRank(index, dir) {
+  const ranked = state.tests.t5.q1.ranked;
+  const newIdx = index + dir;
+  if (newIdx < 0 || newIdx > 5) return;
+  [ranked[index], ranked[newIdx]] = [ranked[newIdx], ranked[index]];
+  renderRanking();
+}
+
+function submitT5Q1() {
+  const scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  state.tests.t5.q1.ranked.forEach((id, rankIdx) => {
+    const phrase = IMIC_Q1_PHRASES.find(p => p.id === id);
+    if (phrase) scores[phrase.letter] += RANK_POINTS[rankIdx];
+  });
+  state.tests.t5.q1.scores = scores;
+  state.tests.t5.q1.done = true;
+  initT5Q2();
+  showScreen('t5q2');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 5 — IMIC Q2 : MOTIVATIONS
+// ══════════════════════════════════════════════════════════
+function initT5Q2() {
+  const container = document.getElementById('t5q2Phrases');
+  container.innerHTML = '';
+  IMIC_Q2_PHRASES.forEach(phrase => {
+    const isSel = state.tests.t5.q2.selectedIds.includes(phrase.id);
+    const maxed = state.tests.t5.q2.selectedIds.length >= 20;
+    const item = document.createElement('label');
+    item.className = 'checkbox-item' + (isSel?' checked':'') + (!isSel&&maxed?' disabled':'');
+    item.innerHTML = `<div class="custom-checkbox"></div><span class="checkbox-text">${phrase.text}</span>`;
+    item.onclick = () => {
+      if (!isSel && state.tests.t5.q2.selectedIds.length >= 20) return;
+      toggleT5Q2(phrase.id);
+    };
+    container.appendChild(item);
+  });
+  updateT5Q2Counter();
+}
+
+function toggleT5Q2(id) {
+  const sel = state.tests.t5.q2.selectedIds;
+  const idx = sel.indexOf(id);
+  if (idx >= 0) sel.splice(idx,1); else if (sel.length < 20) sel.push(id);
+  initT5Q2();
+}
+
+function updateT5Q2Counter() {
+  const count = state.tests.t5.q2.selectedIds.length;
+  document.getElementById('t5q2Count').textContent = count;
+  document.getElementById('t5q2Submit').disabled = count !== 20;
+}
+
+function submitT5Q2() {
+  const scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  state.tests.t5.q2.selectedIds.forEach(id => {
+    const p = IMIC_Q2_PHRASES.find(x => x.id === id);
+    if (p) scores[p.letter]++;
+  });
+  state.tests.t5.q2.scores = scores;
+  state.tests.t5.q2.done = true;
+  initT5Q3();
+  showScreen('t5q3');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 5 — IMIC Q3 : SAVOIR-FAIRE
+// ══════════════════════════════════════════════════════════
+function initT5Q3() {
+  const container = document.getElementById('t5q3Verbs');
+  container.innerHTML = '';
+  IMIC_Q3_VERBS.forEach(verb => {
+    const isSel = state.tests.t5.q3.selectedIds.includes(verb.id);
+    const maxed = state.tests.t5.q3.selectedIds.length >= 40;
+    const item = document.createElement('label');
+    item.className = 'verb-item' + (isSel?' checked':'') + (!isSel&&maxed?' disabled':'');
+    item.innerHTML = `<div class="custom-checkbox" style="width:18px;height:18px;border-radius:4px;"></div><span>${verb.text}</span>`;
+    item.onclick = () => {
+      if (!isSel && state.tests.t5.q3.selectedIds.length >= 40) return;
+      toggleT5Q3(verb.id);
+    };
+    container.appendChild(item);
+  });
+  updateT5Q3Counter();
+}
+
+function toggleT5Q3(id) {
+  const sel = state.tests.t5.q3.selectedIds;
+  const idx = sel.indexOf(id);
+  if (idx >= 0) sel.splice(idx,1); else if (sel.length < 40) sel.push(id);
+  initT5Q3();
+}
+
+function updateT5Q3Counter() {
+  const count = state.tests.t5.q3.selectedIds.length;
+  document.getElementById('t5q3Count').textContent = count;
+  document.getElementById('t5q3Submit').disabled = count < 20;
+}
+
+function submitT5Q3() {
+  const scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  state.tests.t5.q3.selectedIds.forEach(id => {
+    const v = IMIC_Q3_VERBS.find(x => x.id === id);
+    if (v) scores[v.letter]++;
+  });
+  state.tests.t5.q3.scores = scores;
+  state.tests.t5.q3.done = true;
+  initT5Q4();
+  showScreen('t5q4');
+}
+
+// ══════════════════════════════════════════════════════════
+// TEST 5 — IMIC Q4 : SAVOIR-ÊTRE
+// ══════════════════════════════════════════════════════════
+function initT5Q4() {
+  const container = document.getElementById('t5q4Qualities');
+  container.innerHTML = '';
+  IMIC_Q4_QUALITIES.forEach(q => {
+    const isSel = state.tests.t5.q4.selectedIds.includes(q.id);
+    const maxed = state.tests.t5.q4.selectedIds.length >= 20;
+    const item = document.createElement('label');
+    item.className = 'checkbox-item' + (isSel?' checked':'') + (!isSel&&maxed?' disabled':'');
+    item.innerHTML = `<div class="custom-checkbox"></div>
+      <span class="checkbox-text">${q.text} <span style="font-size:0.78rem;color:#9CA3AF;font-weight:600;">(${q.keyword})</span></span>`;
+    item.onclick = () => {
+      if (!isSel && state.tests.t5.q4.selectedIds.length >= 20) return;
+      toggleT5Q4(q.id);
+    };
+    container.appendChild(item);
+  });
+  updateT5Q4Counter();
+}
+
+function toggleT5Q4(id) {
+  const sel = state.tests.t5.q4.selectedIds;
+  const idx = sel.indexOf(id);
+  if (idx >= 0) sel.splice(idx,1); else if (sel.length < 20) sel.push(id);
+  initT5Q4();
+}
+
+function updateT5Q4Counter() {
+  const count = state.tests.t5.q4.selectedIds.length;
+  document.getElementById('t5q4Count').textContent = count;
+  document.getElementById('t5q4Submit').disabled = count !== 20;
+}
+
+function submitT5Q4() {
+  const q4Scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  state.tests.t5.q4.selectedIds.forEach(id => {
+    const q = IMIC_Q4_QUALITIES.find(x => x.id === id);
+    if (q) q4Scores[q.letter]++;
+  });
+  state.tests.t5.q4.scores = q4Scores;
+
+  // Total RIASEC
+  const total = {R:0,I:0,A:0,S:0,E:0,C:0};
+  const subScores = [
+    state.tests.t5.q1.scores,
+    state.tests.t5.q2.scores,
+    state.tests.t5.q3.scores,
+    q4Scores
+  ];
+  subScores.forEach(sub => {
+    Object.keys(total).forEach(l => { total[l] += (sub[l]||0); });
+  });
+  const top3 = Object.entries(total).sort((a,b) => b[1]-a[1]).slice(0,3).map(([l]) => l);
+
+  state.tests.t5.q4.done = true;
+  state.tests.t5.q4.total = total;
+  state.tests.t5.q4.top3 = top3;
+  state.tests.t5.done = true;
+  saveLocal();
+  saveToSheet('t5');
+
+  // Render results
+  const sorted = Object.entries(total).sort((a,b) => b[1]-a[1]);
+  let html = `<h3>🎯 Votre profil RIASEC</h3>`;
+  html += `<div style="display:flex;gap:0.75rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;">`;
+  top3.forEach((l, i) => {
+    html += `<div style="text-align:center;">
+      <div style="width:56px;height:56px;border-radius:50%;background:${RIASEC_COLORS[l]};color:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 0.4rem;">${l}</div>
+      <div style="font-size:0.8rem;font-weight:600;">${RIASEC_LABELS[l]}</div>
+      <div style="font-size:0.75rem;color:#6B7280;">${total[l]} pts · #${i+1}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<h3 style="margin-bottom:0.875rem;">Tableau récapitulatif</h3>`;
+  sorted.forEach(([l, val]) => {
+    const isTop = top3.includes(l);
+    const maxPts = 50;
+    html += `<div class="score-bar-wrap">
+      <div class="score-bar-label">
+        <span style="display:flex;align-items:center;gap:0.4rem;">
+          <span style="width:22px;height:22px;border-radius:50%;background:${RIASEC_COLORS[l]};color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;">${l}</span>
+          <span style="font-weight:${isTop?700:400}">${RIASEC_LABELS[l]}</span>
+        </span>
+        <span class="score-val" style="color:${RIASEC_COLORS[l]}">${val}</span>
+      </div>
+      <div class="score-bar">
+        <div class="score-bar-fill" style="width:${Math.min(val/maxPts*100,100)}%;background:${RIASEC_COLORS[l]};opacity:${isTop?1:0.45}"></div>
+      </div>
+    </div>`;
+  });
+
+  // ── TYPE DOMINANT ──
+  const domType = RIASEC_DOMINANT_TYPES[top3[0]];
+  if (domType) {
+    html += `<div style="margin-top:1.5rem;border-top:1px solid #E5E7EB;padding-top:1.25rem;">
+      <h3 style="margin-bottom:1rem;">📖 Votre profil en détail</h3>
+      <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.1rem;margin-bottom:1rem;">
+        <div style="font-weight:700;font-size:0.95rem;color:${RIASEC_COLORS[top3[0]]};margin-bottom:0.5rem;">${domType.title}</div>
+        <p style="font-size:0.875rem;color:#374151;line-height:1.65;">${domType.text}</p>
+      </div>`;
+  }
+
+  // ── DOMAINES PROFESSIONNELS ──
+  const domains = RIASEC_DOMAINS[top3[0]];
+  if (domains) {
+    html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.75rem;">🗂️ Domaines professionnels à explorer</div>
+      <ul style="list-style:none;padding:0;margin:0;">
+        ${domains.map(d => `<li style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.4rem;font-size:0.85rem;color:#374151;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${RIASEC_COLORS[top3[0]]};flex-shrink:0;margin-top:5px;"></span>${d}</li>`).join('')}
+      </ul>
+    </div>`;
+  }
+
+  // ── PROFIL COMBINÉ TOP 2 ──
+  const prof2key = top3[0] + top3[1];
+  const prof2 = RIASEC_PROFILES_2[prof2key] || RIASEC_PROFILES_2[top3[1]+top3[0]];
+  if (prof2) {
+    html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">⭐ ${prof2.title} — Profil combiné</div>
+      <p style="font-size:0.875rem;color:#374151;margin-bottom:0.875rem;line-height:1.65;">${prof2.text}</p>
+      <div style="font-size:0.8rem;font-weight:700;color:#6B7280;margin-bottom:0.5rem;">💼 Métiers suggérés :</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+        ${prof2.metiers.map(m => `<span style="background:${RIASEC_COLORS[top3[0]]}18;color:${RIASEC_COLORS[top3[0]]};border:1px solid ${RIASEC_COLORS[top3[0]]}33;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:500;">${m}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // ── PROFIL COMBINÉ TOP 3 (si disponible) ──
+  const prof3key = top3[0] + top3[1] + top3[2];
+  const prof3keyAlt = top3[0] + top3[2] + top3[1];
+  // Chercher le profil 3 lettres dans les données existantes
+  let prof3jobs = null;
+  const p2data = RIASEC_PROFILES_2[top3[0]+top3[1]] || RIASEC_PROFILES_2[top3[1]+top3[0]];
+  if (p2data && p2data.metiers) {
+    // On a déjà les métiers du profil 2 lettres, essayons le profil 3 lettres
+    html += `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:#EA580C;">🔺 Profil à 3 lettres : ${top3.join('')}</div>
+      <p style="font-size:0.875rem;color:#374151;line-height:1.65;">Votre profil complet combine les dimensions <strong>${RIASEC_LABELS[top3[0]]}</strong>, <strong>${RIASEC_LABELS[top3[1]]}</strong> et <strong>${RIASEC_LABELS[top3[2]]}</strong>. Ce trigramme oriente vers des métiers qui mêlent ces trois dimensions à la fois. Explorez avec votre coach les pistes qui correspondent le mieux à votre situation personnelle.</p>
+    </div>`;
+  }
+
+  if (domType) html += `</div>`;
+  document.getElementById('t5Results').innerHTML = html;
+  showScreen('t5r');
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════
+function buildExportData() {
+  const t = state.tests;
+  return {
+    participant: state.participant,
+    date_export: new Date().toISOString(),
+    tests: {
+      intelligences_multiples: {
+        scores: t.t1.scores,
+        reponses_cochees: Array.from(t.t1.checked).sort((a,b)=>a-b)
+      },
+      sisem: {
+        scores: t.t2.scores,
+        top3_moteurs: t.t2.topMotors,
+        reponses: t.t2.answers
+      },
+      activites: {
+        liste: t.t3.activities.filter(a => a.activite.trim() !== '')
+      },
+      metier_reves: t.t4.reponses,
+      imic_riasec: {
+        scores_total: t.t5.q4.total,
+        top3: t.t5.q4.top3,
+        q1_image_de_soi: { ranked: t.t5.q1.ranked, scores: t.t5.q1.scores },
+        q2_motivations: { selected: t.t5.q2.selectedIds, scores: t.t5.q2.scores },
+        q3_savoir_faire: { selected: t.t5.q3.selectedIds, scores: t.t5.q3.scores },
+        q4_savoir_etre: { selected: t.t5.q4.selectedIds, scores: t.t5.q4.scores }
+      }
+    }
+  };
+}
+
+function exportJSON() {
+  const data = buildExportData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const name = `${state.participant.nom}_${state.participant.prenom}_orientestpress.json`;
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportCSV() {
+  const d = buildExportData();
+  const p = d.participant;
+  const t = d.tests;
+
+  let rows = [['Champ','Valeur']];
+  rows.push(['Prénom', p.prenom]);
+  rows.push(['Nom', p.nom]);
+  rows.push(['Date', p.date]);
+  rows.push(['','']);
+
+  // IM
+  rows.push(['=== INTELLIGENCES MULTIPLES ===','']);
+  Object.entries(t.intelligences_multiples.scores).forEach(([k,v]) => {
+    rows.push([IM_LABELS[k] || k, v + '/10']);
+  });
+  rows.push(['','']);
+
+  // SISEM
+  rows.push(['=== SISEM ===','']);
+  Object.entries(t.sisem.scores).forEach(([k,v]) => {
+    rows.push([SISEM_LABELS[k] || k, v + '/15']);
+  });
+  rows.push(['Top 3 moteurs', t.sisem.top3_moteurs.map(k=>SISEM_LABELS[k]).join(' / ')]);
+  rows.push(['','']);
+
+  // Activités
+  rows.push(['=== ACTIVITÉS QUE J\'AIME ===','']);
+  t.activites.liste.forEach((a, i) => {
+    rows.push([`Activité ${i+1}`, a.activite]);
+    rows.push([`Mots-clés ${i+1}`, a.motsCles]);
+  });
+  rows.push(['','']);
+
+  // Métier de rêves
+  rows.push(['=== MÉTIER DE MES RÊVES ===','']);
+  rows.push(['Métier rêvé', t.metier_reves.metier_reve || '']);
+  rows.push(['Secteur idéal', t.metier_reves.secteur_ideal || '']);
+  rows.push(['Motivations', t.metier_reves.motivations || '']);
+  rows.push(['Environnement', t.metier_reves.environnement_travail || '']);
+  rows.push(['','']);
+
+  // IMIC
+  rows.push(['=== IMIC / RIASEC ===','']);
+  const imic = t.imic_riasec;
+  rows.push(['Top 3 RIASEC', imic.top3.map(l=>RIASEC_LABELS[l]).join(' / ')]);
+  Object.entries(imic.scores_total).sort((a,b)=>b[1]-a[1]).forEach(([l,v]) => {
+    rows.push([RIASEC_LABELS[l], v + ' pts']);
+  });
+
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const name = `${p.nom}_${p.prenom}_orientestpress.csv`;
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// CONFIGURATION GOOGLE SHEETS
+// Remplacez cette URL par celle de votre Google Apps Script
+// ══════════════════════════════════════════════════════════
+const GSHEET_URL = 'https://script.google.com/macros/s/AKfycbxp0J1ZNbAF2p1zWph8p3NLai_g_iRQGjFtkhRKiy00p7yjc4foKsmKItwJQFVUbkzc/exec';
+
+// ══════════════════════════════════════════════════════════
+// GESTION DES TABS PAGE D'ACCUEIL
+// ══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  const isNew = tab === 'new';
+  document.getElementById('panelNew').style.display = isNew ? 'block' : 'none';
+  document.getElementById('panelResume').style.display = isNew ? 'none' : 'block';
+  document.getElementById('resumeError').style.display = 'none';
+  const tabNew = document.getElementById('tabNew');
+  const tabResume = document.getElementById('tabResume');
+  if (isNew) {
+    tabNew.style.background = 'white'; tabNew.style.color = '#111827'; tabNew.style.boxShadow = '0 1px 4px rgba(0,0,0,0.1)';
+    tabResume.style.background = 'transparent'; tabResume.style.color = '#6B7280'; tabResume.style.boxShadow = 'none';
+  } else {
+    tabResume.style.background = 'white'; tabResume.style.color = '#111827'; tabResume.style.boxShadow = '0 1px 4px rgba(0,0,0,0.1)';
+    tabNew.style.background = 'transparent'; tabNew.style.color = '#6B7280'; tabNew.style.boxShadow = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// GÉNÉRATION CODE UNIQUE
+// ══════════════════════════════════════════════════════════
+function generateCode(prenom) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let suffix = '';
+  for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+  const name = prenom.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6);
+  return 'OTP-' + name + '-' + suffix;
+}
+
+// ══════════════════════════════════════════════════════════
+// COPIER LE CODE
+// ══════════════════════════════════════════════════════════
+function copyCode() {
+  const code = state.participant.code;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copié !';
+    btn.style.background = '#16A34A';
+    setTimeout(() => { btn.textContent = '📋 Copier'; btn.style.background = '#F97316'; }, 2000);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// SAUVEGARDE GOOGLE SHEETS
+// ══════════════════════════════════════════════════════════
+async function saveToSheet(testKey) {
+  if (!GSHEET_URL || GSHEET_URL === 'VOTRE_URL_ICI') return;
+  try {
+    const data = buildExportData();
+    await fetch(GSHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, lastTest: testKey, timestamp: new Date().toISOString() })
+    });
+  } catch(e) { console.log('Sheet sync error:', e); }
+}
+
+// ══════════════════════════════════════════════════════════
+// SAUVEGARDE LOCALE (localStorage)
+// ══════════════════════════════════════════════════════════
+function saveLocal() {
+  if (!state.participant.code) return;
+  try {
+    localStorage.setItem('otp_' + state.participant.code, JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadLocal(code) {
+  try {
+    const saved = localStorage.getItem('otp_' + code);
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════
+// REPRENDRE UNE SESSION
+// ══════════════════════════════════════════════════════════
+async function resumeTests() {
+  const code = document.getElementById('inputCode').value.trim().toUpperCase();
+  if (!code) { alert('Veuillez entrer votre code de reprise.'); return; }
+
+  // Feedback visuel — bouton chargement
+  const btn = document.querySelector('#panelResume .btn-primary');
+  const origText = btn.textContent;
+  btn.textContent = 'Recherche en cours...';
+  btn.disabled = true;
+  document.getElementById('resumeError').style.display = 'none';
+
+  function restoreState(saved) {
+    try {
+      state = typeof saved === 'string' ? JSON.parse(saved) : saved;
+      // Reconstruire le Set pour t1.checked
+      if (state.tests && state.tests.t1 && state.tests.t1.checked) {
+        if (!state.tests.t1.checked.has) {
+          state.tests.t1.checked = new Set(Array.isArray(state.tests.t1.checked)
+            ? state.tests.t1.checked
+            : Object.values(state.tests.t1.checked));
+        }
+      }
+      document.getElementById('headerName').textContent = state.participant.prenom + ' ' + state.participant.nom;
+      document.getElementById('displayCode').textContent = state.participant.code;
+      renderTestList();
+      showScreen('testlist');
+      return true;
+    } catch(e) {
+      console.error('Erreur restauration:', e);
+      return false;
+    }
+  }
+
+  // 1. Essayer localStorage d'abord
+  try {
+    const localData = localStorage.getItem('otp_' + code);
+    if (localData) {
+      const ok = restoreState(localData);
+      if (ok) return;
+    }
+  } catch(e) { console.log('localStorage error:', e); }
+
+  // 2. Essayer Google Sheets
+  if (GSHEET_URL && GSHEET_URL !== 'VOTRE_URL_ICI') {
+    try {
+      const resp = await fetch(GSHEET_URL + '?code=' + encodeURIComponent(code));
+      const data = await resp.json();
+      if (data && data.participant) {
+        const ok = restoreState(data);
+        if (ok) return;
+      }
+    } catch(e) { console.log('Sheets error:', e); }
+  }
+
+  // 3. Code non trouvé
+  btn.textContent = origText;
+  btn.disabled = false;
+  document.getElementById('resumeError').style.display = 'block';
+}
+
+document.getElementById('inputDate').value = new Date().toLocaleDateString('fr-BE', {
+  weekday:'long', year:'numeric', month:'long', day:'numeric'
+});
+</script>
+</body>
+</html>
