@@ -2852,7 +2852,7 @@ function exportPDF() {
     // TEST 3 — ACTIVITÉS
     if (t.t3.done && t.t3.activities) {
       const acts = t.t3.activities.filter(a => a.activite && a.activite.trim());
-      content += '<h2 style="font-family:Sora,sans-serif;color:#16A34A;border-left:4px solid #16A34A;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">🌟 Test 3 — Activités que j'aime</h2>';
+      content += '<h2 style="font-family:Sora,sans-serif;color:#16A34A;border-left:4px solid #16A34A;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">🌟 Test 3 — Activités</h2>';
       content += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">';
       content += '<tr style="background:#F0FDF4;"><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Activité</th><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Mots-clés</th></tr>';
       acts.forEach(a => {
@@ -2920,8 +2920,8 @@ function exportPDF() {
 
     // MENTION IA
     content += '<div style="margin-top:2rem;padding:0.875rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;font-size:0.75rem;color:#6B7280;line-height:1.6;">';
-    content += '<strong style="color:#374151;">Informations relatives à l'utilisation de l'intelligence artificielle</strong><br>';
-    content += 'Cette synthèse a été générée avec l'aide d'une intelligence artificielle. Les données utilisées sont préalablement anonymisées. Le contenu est systématiquement relu et validé par votre coach. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment.';
+    content += '<strong style="color:#374151;">Informations relatives à l’utilisation de l’intelligence artificielle</strong><br>';
+    content += 'Cette synthèse a été générée avec l’aide d’une intelligence artificielle. Les données utilisées sont préalablement anonymisées. Le contenu est systématiquement relu et validé par votre coach. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment.';
     content += '</div>';
 
     // AFFICHER VIA BLOB URL
