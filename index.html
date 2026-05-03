@@ -3348,8 +3348,9 @@ async function resumeTests() {
       }
       document.getElementById('headerName').textContent = state.participant.prenom + ' ' + state.participant.nom;
       document.getElementById('displayCode').textContent = state.participant.code;
+      renderIntroParcours();
       renderTestList();
-      showScreen('testlist');
+      showScreen('intro');
       return true;
     } catch(e) {
       console.error('Erreur restauration:', e);
