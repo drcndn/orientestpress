@@ -813,12 +813,21 @@
 
     <div id="allDoneSection" style="display:none; margin-top:2rem;">
       <div class="export-section">
-        <div class="export-title">🎉 Tous les tests sont complétés !</div>
-        <div class="export-desc">Consultez votre bilan complet ou téléchargez vos résultats.</div>
-        <div style="margin-bottom:1rem;">
-          <button class="btn btn-primary btn-full btn-lg" onclick="showRecap()" style="background:linear-gradient(135deg,#F97316,#EA580C);">
-            📊 Voir mon bilan complet
-          </button>
+        <!-- Message félicitations inspiré de Lovable -->
+        <div style="display:flex;align-items:flex-start;gap:0.875rem;margin-bottom:1.25rem;">
+          <span style="font-size:2rem;flex-shrink:0;">🎉</span>
+          <div>
+            <div style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#15803D;margin-bottom:0.625rem;">Tous vos tests sont complétés !</div>
+            <p style="font-size:0.875rem;color:#374151;line-height:1.7;margin:0 0 0.5rem 0;">
+              Merci pour votre participation. Votre coach va à présent analyser l'ensemble de vos résultats.
+            </p>
+            <p style="font-size:0.875rem;color:#374151;line-height:1.7;margin:0 0 0.5rem 0;">
+              Avant de vous les partager, votre coach planifiera un <strong>entretien de suivi</strong> avec vous, afin de discuter ensemble de cette analyse et d'en explorer les pistes.
+            </p>
+            <p style="font-size:0.875rem;color:#374151;line-height:1.7;margin:0;">
+              À l'issue de cet entretien, votre coach vous remettra vos résultats sur un document de synthèse.
+            </p>
+          </div>
         </div>
         <div class="export-buttons">
           <button class="btn btn-export-json" onclick="exportJSON()">⬇ Télécharger (JSON)</button>
@@ -2042,11 +2051,7 @@ function goToTestList() {
   // Si tous les tests sont finis, proposer le recap
   const allDone = ['t1','t2','t3','t4','t5'].every(k => state.tests[k].done);
   if (allDone) {
-    setTimeout(() => {
-      if (confirm('🎉 Félicitations ! Tous vos tests sont complétés.\n\nVoulez-vous voir votre bilan complet ?')) {
-        showRecap();
-      }
-    }, 300);
+    showScreen('testlist');
     return;
   }
   showScreen('testlist');
