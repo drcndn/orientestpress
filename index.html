@@ -829,9 +829,14 @@
             </p>
           </div>
         </div>
-        <div class="export-buttons">
-          <button class="btn btn-export-json" onclick="exportJSON()">⬇ Télécharger (JSON)</button>
-          <button class="btn btn-export-csv" onclick="exportCSV()">⬇ Télécharger (CSV)</button>
+        <div class="export-buttons" style="flex-direction:column;gap:0.625rem;">
+          <button class="btn btn-primary btn-full" onclick="exportPDF()" style="background:linear-gradient(135deg,#DC2626,#B91C1C);">
+            📄 Télécharger mes résultats (PDF)
+          </button>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-export-json" style="flex:1;" onclick="exportJSON()">⬇ JSON</button>
+            <button class="btn btn-export-csv" style="flex:1;" onclick="exportCSV()">⬇ CSV</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1215,7 +1220,10 @@
     </div>
 
     <div id="recapContent"></div>
-    <div style="margin-top:2rem;">
+    <div style="margin-top:2rem;display:flex;flex-direction:column;gap:0.75rem;">
+      <button class="btn btn-primary btn-full" onclick="exportPDF()" style="background:linear-gradient(135deg,#DC2626,#B91C1C);">
+        📄 Télécharger mes résultats (PDF)
+      </button>
       <button class="btn btn-secondary btn-full" onclick="goToTestList()">← Retour à mes tests</button>
     </div>
   </div>
@@ -2772,6 +2780,225 @@ function buildExportData() {
       }
     }
   };
+}
+
+function exportPDF() {
+  const d = buildExportData();
+  const p = d.participant;
+  const t = d.tests;
+  const date = new Date().toLocaleDateString('fr-BE', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // Barres texte ASCII pour les scores
+  function barText(val, max, len=20) {
+    const filled = Math.round((val/max)*len);
+    return '█'.repeat(filled) + '░'.repeat(len-filled) + ` ${val}/${max}`;
+  }
+
+  let content = '';
+
+  // ── EN-TÊTE ──
+  content += `
+    <div style="text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:3px solid #F97316;">
+      <div style="font-size:1.8rem;margin-bottom:0.5rem;">🧭</div>
+      <h1 style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;color:#111827;margin:0 0 0.25rem 0;">Résultats OrienTestPress</h1>
+      <p style="color:#6B7280;font-size:0.9rem;margin:0;">${p.prenom} ${p.nom} — ${p.date || date}</p>
+      <p style="color:#9CA3AF;font-size:0.8rem;margin:0.25rem 0 0 0;">Code de référence : ${p.code || '—'}</p>
+    </div>`;
+
+  // ── TEST 1 : IM ──
+  if (t.intelligences_multiples && Object.keys(t.intelligences_multiples.scores).length > 0) {
+    const scores = t.intelligences_multiples.scores;
+    const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+    const maxScore = sorted[0][1];
+    const top = sorted.filter(([,v])=>v===maxScore).map(([k])=>k);
+    const topDisplay = top.length===1 ? [top[0], sorted[1][0]] : top.slice(0,2);
+
+    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#F97316;border-left:4px solid #F97316;padding-left:0.75rem;margin-bottom:1rem;">🧠 Test 1 — Intelligences multiples</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
+        <tr style="background:#FFF7ED;">
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Intelligence</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Score</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
+        </tr>
+        ${sorted.map(([cat,val])=>`
+        <tr style="background:${topDisplay.includes(cat)?'#FFF7ED':'white'}">
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${topDisplay.includes(cat)?700:400};">${IM_LABELS[cat]}${topDisplay.includes(cat)?' ⭐':''}</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#F97316;">${val}/10</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(val)}${'░'.repeat(10-val)}</td>
+        </tr>`).join('')}
+      </table>`;
+
+    topDisplay.slice(0,2).forEach(cat => {
+      const desc = IM_DETAILS[cat];
+      if (!desc) return;
+      content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+        <div style="font-weight:700;font-size:0.875rem;color:#F97316;margin-bottom:0.4rem;">⭐ ${IM_LABELS[cat]}</div>
+        <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.5rem 0;">${desc.definition}</p>
+        <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers associés :</strong> ${desc.metiers.join(', ')}</div>
+      </div>`;
+    });
+    content += `</div>`;
+  }
+
+  // ── TEST 2 : SISEM ──
+  if (t.sisem && Object.keys(t.sisem.scores).length > 0) {
+    const scores = t.sisem.scores;
+    const top3 = t.sisem.top3_moteurs || [];
+    const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+
+    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#2563EB;border-left:4px solid #2563EB;padding-left:0.75rem;margin-bottom:1rem;">⚡ Test 2 — SISEM</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
+        <tr style="background:#EFF6FF;">
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Moteur</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Score</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
+        </tr>
+        ${sorted.map(([code,val])=>`
+        <tr style="background:${top3.includes(code)?'#EFF6FF':'white'}">
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${top3.includes(code)?700:400};">${SISEM_LABELS[code]}${top3.includes(code)?' ⭐':''}</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#2563EB;">${val}/15</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(Math.round(val/15*15))}${'░'.repeat(15-Math.round(val/15*15))}</td>
+        </tr>`).join('')}
+      </table>`;
+
+    [[0,1],[0,2],[1,2]].forEach(([a,b],i) => {
+      if (!top3[a] || !top3[b]) return;
+      const actData = getCrossingData(top3[a], top3[b]);
+      content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+        <div style="font-weight:700;font-size:0.875rem;margin-bottom:0.3rem;">${i+1}. ${actData.label} <span style="font-size:0.75rem;color:#6B7280;">(${SISEM_LABELS[top3[a]]} + ${SISEM_LABELS[top3[b]]})</span></div>
+        <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.4rem 0;">${actData.description}</p>
+        <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers :</strong> ${actData.metiers.join(', ')}</div>
+      </div>`;
+    });
+    content += `</div>`;
+  }
+
+  // ── TEST 3 : ACTIVITÉS ──
+  if (t.activites && t.activites.liste && t.activites.liste.length > 0) {
+    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#16A34A;border-left:4px solid #16A34A;padding-left:0.75rem;margin-bottom:1rem;">🌟 Test 3 — Activités que j'aime</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <tr style="background:#F0FDF4;">
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Activité</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Mots-clés</th>
+        </tr>
+        ${t.activites.liste.map(a=>`
+        <tr>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:500;">${a.activite}</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;color:#6B7280;font-size:0.8rem;">${a.motsCles||'—'}</td>
+        </tr>`).join('')}
+      </table>
+    </div>`;
+  }
+
+  // ── TEST 4 : MÉTIER DE RÊVES ──
+  if (t.metier_reves && (t.metier_reves.metier_reve || t.metier_reves.secteur_ideal)) {
+    const r = t.metier_reves;
+    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#7C3AED;border-left:4px solid #7C3AED;padding-left:0.75rem;margin-bottom:1rem;">✨ Test 4 — Le métier de mes rêves</h2>
+      ${r.metier_reve?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Métier idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.metier_reve}</div></div>`:''}
+      ${r.secteur_ideal?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Secteur idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.secteur_ideal}</div></div>`:''}
+      ${r.motivations?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Motivations profondes</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.motivations}</div></div>`:''}
+      ${r.environnement_travail?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Environnement idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.environnement_travail}</div></div>`:''}
+    </div>`;
+  }
+
+  // ── TEST 5 : IMIC/RIASEC ──
+  if (t.imic_riasec && t.imic_riasec.scores_total && Object.keys(t.imic_riasec.scores_total).length > 0) {
+    const total = t.imic_riasec.scores_total;
+    const top3 = t.imic_riasec.top3 ? t.imic_riasec.top3.split('') : [];
+    const sorted = Object.entries(total).sort((a,b)=>b[1]-a[1]);
+    const maxPts = Math.max(...Object.values(total));
+
+    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#DC2626;border-left:4px solid #DC2626;padding-left:0.75rem;margin-bottom:1rem;">🎯 Test 5 — IMIC / RIASEC</h2>
+      <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+        ${top3.map((l,i)=>`<div style="text-align:center;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:0.75rem 1rem;">
+          <div style="font-size:1.5rem;font-weight:800;color:${RIASEC_COLORS[l]}">${l}</div>
+          <div style="font-size:0.8rem;font-weight:600;">${RIASEC_LABELS[l]}</div>
+          <div style="font-size:0.75rem;color:#6B7280;">${total[l]} pts · #${i+1}</div>
+        </div>`).join('')}
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
+        <tr style="background:#FEF2F2;">
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Profil</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Points</th>
+          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
+        </tr>
+        ${sorted.map(([l,val])=>`
+        <tr style="background:${top3.includes(l)?'#FEF2F2':'white'}">
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${top3.includes(l)?700:400};">${l} — ${RIASEC_LABELS[l]}${top3.includes(l)?' ⭐':''}</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#DC2626;">${val}</td>
+          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(Math.round(val/50*20))}${'░'.repeat(20-Math.round(val/50*20))}</td>
+        </tr>`).join('')}
+      </table>`;
+
+    if (top3.length > 0) {
+      const domType = RIASEC_DOMINANT_TYPES[top3[0]];
+      if (domType) {
+        content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+          <div style="font-weight:700;font-size:0.875rem;color:#DC2626;margin-bottom:0.4rem;">${domType.title}</div>
+          <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0;">${domType.text.slice(0,400)}...</p>
+        </div>`;
+      }
+      if (top3.length >= 2) {
+        const prof2key = top3[0]+top3[1];
+        const prof2 = RIASEC_PROFILES_2[prof2key] || RIASEC_PROFILES_2[top3[1]+top3[0]];
+        if (prof2) {
+          content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;">
+            <div style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem;">⭐ ${prof2.title}</div>
+            <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.5rem 0;">${prof2.text.slice(0,300)}...</p>
+            <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers suggérés :</strong> ${prof2.metiers.join(', ')}</div>
+          </div>`;
+        }
+      }
+    }
+    content += `</div>`;
+  }
+
+  // ── MENTION IA ──
+  content += `<div style="margin-top:2rem;padding:1rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-size:0.78rem;color:#6B7280;line-height:1.6;">
+    <strong style="color:#374151;">Informations relatives à l'utilisation de l'intelligence artificielle</strong><br>
+    Cette synthèse a été générée avec l'aide d'une intelligence artificielle à partir de vos réponses aux tests et des échanges réalisés avec votre coach. Les données utilisées sont préalablement anonymisées et ne contiennent aucune information permettant de vous identifier directement.<br>
+    Le contenu généré constitue une aide à la réflexion et à l'orientation. Il est systématiquement relu et validé par votre coach et ne fait l'objet d'aucune décision automatisée.<br>
+    Conformément au RGPD, vous pouvez demander à tout moment la suppression des données utilisées dans le cadre de cet accompagnement.
+  </div>`;
+
+  // ── GÉNÉRER ET IMPRIMER ──
+  const printWin = window.open('', '_blank', 'width=800,height=900');
+  printWin.document.write(`<!DOCTYPE html>
+  <html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Résultats OrienTestPress — ${p.prenom} ${p.nom}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+      * { margin:0;padding:0;box-sizing:border-box; }
+      body { font-family:'DM Sans',sans-serif;color:#111827;padding:2rem;max-width:800px;margin:0 auto;font-size:14px; }
+      h1,h2,h3 { font-family:'Sora',sans-serif; }
+      @media print {
+        body { padding:1rem; }
+        .no-print { display:none; }
+        div { page-break-inside:avoid; }
+      }
+    </style>
+  </head>
+  <body>
+    ${content}
+    <div class="no-print" style="text-align:center;margin-top:2rem;padding:1rem;background:#FFF7ED;border-radius:8px;">
+      <button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-right:0.75rem;">
+        🖨️ Imprimer / Enregistrer en PDF
+      </button>
+      <button onclick="window.close()" style="background:#F3F4F6;color:#374151;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;">
+        Fermer
+      </button>
+      <p style="margin-top:0.75rem;font-size:0.8rem;color:#6B7280;">Pour enregistrer en PDF : cliquez sur "Imprimer" puis choisissez "Enregistrer en PDF" comme imprimante.</p>
+    </div>
+  </body>
+  </html>`);
+  printWin.document.close();
 }
 
 function exportJSON() {
