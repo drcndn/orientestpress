@@ -2966,39 +2966,44 @@ function exportPDF() {
     Conformément au RGPD, vous pouvez demander à tout moment la suppression des données utilisées dans le cadre de cet accompagnement.
   </div>`;
 
-  // ── GÉNÉRER ET IMPRIMER ──
-  const printWin = window.open('', '_blank', 'width=800,height=900');
-  printWin.document.write(`<!DOCTYPE html>
-  <html lang="fr">
-  <head>
-    <meta charset="UTF-8">
-    <title>Résultats OrienTestPress — ${p.prenom} ${p.nom}</title>
+  // ── GÉNÉRER VIA OVERLAY PLEIN ÉCRAN ──
+  // Supprimer overlay existant si présent
+  const existing = document.getElementById('pdfOverlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'pdfOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:99999;overflow-y:auto;padding:2rem;font-family:DM Sans,sans-serif;';
+
+  overlay.innerHTML = `
+    <div style="max-width:800px;margin:0 auto;">
+      <div style="position:sticky;top:0;background:white;padding:0.75rem 0 1rem;border-bottom:2px solid #F97316;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;z-index:10;" class="no-print">
+        <div>
+          <div style="font-family:Sora,sans-serif;font-weight:700;font-size:1rem;color:#111827;">📄 Aperçu avant impression</div>
+          <div style="font-size:0.78rem;color:#6B7280;margin-top:0.2rem;">Cliquez sur "Imprimer" puis choisissez "Enregistrer en PDF" comme imprimante</div>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+          <button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.6rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
+            🖨️ Imprimer / PDF
+          </button>
+          <button onclick="document.getElementById('pdfOverlay').remove();" style="background:#F3F4F6;color:#374151;border:none;padding:0.6rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;">
+            ✕ Fermer
+          </button>
+        </div>
+      </div>
+      <div id="pdfContent">${content}</div>
+    </div>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
-      * { margin:0;padding:0;box-sizing:border-box; }
-      body { font-family:'DM Sans',sans-serif;color:#111827;padding:2rem;max-width:800px;margin:0 auto;font-size:14px; }
-      h1,h2,h3 { font-family:'Sora',sans-serif; }
       @media print {
-        body { padding:1rem; }
-        .no-print { display:none; }
-        div { page-break-inside:avoid; }
+        #pdfOverlay > div > div:first-child { display:none !important; }
+        #pdfOverlay { padding:0.5rem !important; }
+        * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
       }
     </style>
-  </head>
-  <body>
-    ${content}
-    <div class="no-print" style="text-align:center;margin-top:2rem;padding:1rem;background:#FFF7ED;border-radius:8px;">
-      <button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-right:0.75rem;">
-        🖨️ Imprimer / Enregistrer en PDF
-      </button>
-      <button onclick="window.close()" style="background:#F3F4F6;color:#374151;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;">
-        Fermer
-      </button>
-      <p style="margin-top:0.75rem;font-size:0.8rem;color:#6B7280;">Pour enregistrer en PDF : cliquez sur "Imprimer" puis choisissez "Enregistrer en PDF" comme imprimante.</p>
-    </div>
-  </body>
-  </html>`);
-  printWin.document.close();
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.scrollTop = 0;
 }
 
 function exportJSON() {
