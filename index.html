@@ -622,7 +622,14 @@
     <div class="logo-icon">🧭</div>
     OrienTestPress
   </a>
-  <span class="header-participant" id="headerName"></span>
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <span class="header-participant" id="headerName"></span>
+    <button id="btnQuitter" onclick="confirmQuit()" style="display:none;padding:0.35rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:8px;background:white;font-size:0.8rem;font-weight:600;color:#6B7280;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='#DC2626';this.style.color='#DC2626';"
+      onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+      ✕ Quitter
+    </button>
+  </div>
 </header>
 <div class="progress-bar-wrap">
   <div class="progress-bar-fill" id="globalProgress" style="width:0%"></div>
@@ -1694,6 +1701,9 @@ function showScreen(id) {
   document.getElementById('screen-' + id).classList.add('active');
   window.scrollTo(0,0);
   updateProgress();
+  // Afficher le bouton Quitter sauf sur la page d'accueil
+  const btn = document.getElementById('btnQuitter');
+  if (btn) btn.style.display = (id === 'welcome') ? 'none' : 'inline-flex';
 }
 
 function updateProgress() {
@@ -2784,6 +2794,58 @@ function renderIntroParcours() {
   const anyDone = ['t1','t2','t3','t4','t5'].some(k => state.tests[k].done);
   const introRecapBtn = document.getElementById('introRecapBtn');
   if (introRecapBtn) introRecapBtn.style.display = anyDone ? 'block' : 'none';
+}
+
+function confirmQuit() {
+  // Créer la modale de confirmation
+  const overlay = document.createElement('div');
+  overlay.id = 'quitOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  const code = state.participant.code || '';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:2rem;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">🚪</div>
+      <h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Voulez-vous quitter ?</h3>
+      <p style="font-size:0.875rem;color:#6B7280;margin-bottom:1rem;line-height:1.6;">
+        Votre progression sera sauvegardée automatiquement. Vous pourrez reprendre avec votre code :
+      </p>
+      <div style="font-size:1.2rem;font-weight:800;color:#F97316;letter-spacing:0.08em;font-family:'Sora',sans-serif;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:8px;padding:0.625rem;margin-bottom:1.25rem;">${code}</div>
+      <div style="display:flex;flex-direction:column;gap:0.625rem;">
+        <button onclick="doQuit()"
+          style="background:linear-gradient(135deg,#DC2626,#B91C1C);color:white;border:none;padding:0.75rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;cursor:pointer;font-size:0.9rem;">
+          💾 Sauvegarder et quitter
+        </button>
+        <button onclick="document.getElementById('quitOverlay').remove();"
+          style="background:#F3F4F6;color:#374151;border:none;padding:0.75rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;cursor:pointer;font-size:0.9rem;">
+          ← Continuer les tests
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function doQuit() {
+  saveLocal();
+  saveToSheet('partial');
+  document.getElementById('quitOverlay')?.remove();
+  // Fermer l'onglet ou retourner à l'accueil
+  window.close();
+  // Si window.close() ne fonctionne pas (page ouverte via lien direct)
+  setTimeout(() => {
+    state = {
+      participant: { prenom:'', nom:'', date:'', code:'' },
+      tests: {
+        t1:{ done:false, checked:new Set(), scores:{} },
+        t2:{ done:false, answers:{}, scores:{}, topMotors:[] },
+        t3:{ done:false, activities:[] },
+        t4:{ done:false, reponses:{} },
+        t5:{ done:false, q1:{selectedIds:[],ranked:[],done:false,scores:{}}, q2:{selectedIds:[],done:false,scores:{}}, q3:{selectedIds:[],done:false,scores:{}}, q4:{selectedIds:[],done:false,scores:{},total:{},top3:[]} }
+      }
+    };
+    document.getElementById('headerName').textContent = '';
+    document.getElementById('btnQuitter').style.display = 'none';
+    showScreen('welcome');
+  }, 300);
 }
 
 function scrollToSection(id) {
