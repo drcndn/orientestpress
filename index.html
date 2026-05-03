@@ -1085,11 +1085,47 @@
 <!-- ═══════════════════════════════════════════ -->
 <div class="screen" id="screen-recap">
   <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
       <h1 class="screen-title" style="margin-bottom:0;">📊 Mes résultats</h1>
       <button class="btn btn-secondary btn-sm" onclick="goToTestList()">← Retour</button>
     </div>
-    <p style="color:#6B7280;font-size:0.9rem;margin-bottom:2rem;">Voici la synthèse de tous vos tests complétés.</p>
+    <p style="color:#6B7280;font-size:0.9rem;margin-bottom:1.25rem;">Voici la synthèse de tous vos tests complétés.</p>
+
+    <!-- Navigation rapide par ancres -->
+    <div id="recapNav" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:2rem;padding:0.875rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:12px;">
+      <span style="font-size:0.75rem;font-weight:700;color:#6B7280;width:100%;margin-bottom:0.25rem;">Aller à :</span>
+      <button onclick="scrollToSection('recap-t1')" id="navBtn-t1"
+        style="padding:0.4rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:20px;background:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;color:#6B7280;"
+        onmouseover="this.style.borderColor='#F97316';this.style.color='#F97316';"
+        onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+        🧠 Intelligences multiples
+      </button>
+      <button onclick="scrollToSection('recap-t2')" id="navBtn-t2"
+        style="padding:0.4rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:20px;background:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;color:#6B7280;"
+        onmouseover="this.style.borderColor='#2563EB';this.style.color='#2563EB';"
+        onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+        ⚡ SISEM
+      </button>
+      <button onclick="scrollToSection('recap-t3')" id="navBtn-t3"
+        style="padding:0.4rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:20px;background:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;color:#6B7280;"
+        onmouseover="this.style.borderColor='#16A34A';this.style.color='#16A34A';"
+        onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+        🌟 Activités
+      </button>
+      <button onclick="scrollToSection('recap-t4')" id="navBtn-t4"
+        style="padding:0.4rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:20px;background:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;color:#6B7280;"
+        onmouseover="this.style.borderColor='#7C3AED';this.style.color='#7C3AED';"
+        onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+        ✨ Métier de rêves
+      </button>
+      <button onclick="scrollToSection('recap-t5')" id="navBtn-t5"
+        style="padding:0.4rem 0.875rem;border:1.5px solid #E5E7EB;border-radius:20px;background:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;color:#6B7280;"
+        onmouseover="this.style.borderColor='#DC2626';this.style.color='#DC2626';"
+        onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280';">
+        🎯 IMIC / RIASEC
+      </button>
+    </div>
+
     <div id="recapContent"></div>
     <div style="margin-top:2rem;">
       <button class="btn btn-secondary btn-full" onclick="goToTestList()">← Retour à mes tests</button>
@@ -1615,7 +1651,7 @@ function showRecap() {
     const top = sorted.filter(([,v]) => v === maxScore).map(([k]) => k);
     const topDisplay = top.length === 1 ? [top[0], sorted[1][0]] : top.slice(0,2);
 
-    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+    html += `<div class="results-card" style="margin-bottom:1.5rem;" id="recap-t1">
       <h3 style="margin-bottom:1rem;color:#F97316;">🧠 Test 1 — Intelligences multiples</h3>`;
     sorted.forEach(([cat, val], i) => {
       const isTop = topDisplay.includes(cat);
@@ -1650,7 +1686,7 @@ function showRecap() {
     const scores = t.t2.scores;
     const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
     const top3 = t.t2.topMotors;
-    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+    html += `<div class="results-card" style="margin-bottom:1.5rem;" id="recap-t2">
       <h3 style="margin-bottom:1rem;color:#2563EB;">⚡ Test 2 — SISEM</h3>`;
     sorted.forEach(([code, val]) => {
       const isTop = top3.includes(code);
@@ -1683,7 +1719,7 @@ function showRecap() {
   // ── TEST 3 : ACTIVITÉS ──
   if (t.t3.done) {
     const acts = t.t3.activities.filter(a => a.activite.trim() !== '');
-    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+    html += `<div class="results-card" style="margin-bottom:1.5rem;" id="recap-t3">
       <h3 style="margin-bottom:1rem;color:#16A34A;">🌟 Test 3 — Activités que j'aime</h3>
       <div style="display:flex;flex-direction:column;gap:0.5rem;">
         ${acts.map(a => `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:0.75rem;">
@@ -1697,7 +1733,7 @@ function showRecap() {
   // ── TEST 4 : MÉTIER DE RÊVES ──
   if (t.t4.done) {
     const r = t.t4.reponses;
-    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+    html += `<div class="results-card" style="margin-bottom:1.5rem;" id="recap-t4">
       <h3 style="margin-bottom:1rem;color:#7C3AED;">✨ Test 4 — Le métier de mes rêves</h3>
       <div style="display:flex;flex-direction:column;gap:0.875rem;">
         ${r.metier_reve ? `<div><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Métier idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:0.75rem;font-size:0.9rem;color:#374151;">${r.metier_reve}</div></div>` : ''}
@@ -1713,7 +1749,7 @@ function showRecap() {
     const total = t.t5.q4.total;
     const top3 = t.t5.q4.top3;
     const sorted = Object.entries(total).sort((a,b) => b[1]-a[1]);
-    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+    html += `<div class="results-card" style="margin-bottom:1.5rem;" id="recap-t5">
       <h3 style="margin-bottom:1rem;color:#DC2626;">🎯 Test 5 — IMIC / RIASEC</h3>
       <div style="display:flex;gap:0.75rem;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap;">
         ${top3.map((l,i) => `<div style="text-align:center;">
@@ -2653,6 +2689,20 @@ async function saveToSheet(testKey) {
 // ══════════════════════════════════════════════════════════
 // SAUVEGARDE LOCALE (localStorage)
 // ══════════════════════════════════════════════════════════
+function scrollToSection(id) {
+  // Petit délai pour laisser le contenu se rendre
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Highlight temporaire
+      el.style.transition = 'box-shadow 0.3s';
+      el.style.boxShadow = '0 0 0 3px rgba(249,115,22,0.3)';
+      setTimeout(() => { el.style.boxShadow = ''; }, 1500);
+    }
+  }, 100);
+}
+
 function saveAndQuit() {
   saveLocal();
   saveToSheet('partial');
