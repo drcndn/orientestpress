@@ -2998,7 +2998,7 @@ function exportCSV() {
   rows.push(['','']);
 
   // Activités
-  rows.push(['=== ACTIVITÉS QUE J\'AIME ===','']);
+  rows.push(['=== ACTIVITÉS QUE J’AIME ===','']);
   t.activites.liste.forEach((a, i) => {
     rows.push([`Activité ${i+1}`, a.activite]);
     rows.push([`Mots-clés ${i+1}`, a.motsCles]);
@@ -3117,7 +3117,7 @@ function renderIntroParcours() {
   const testDefs = [
     {key:'t1', emoji:'🧠', label:'Intelligences multiples', duree:'15 min', explication:"Évalue vos préférences dans 8 domaines cognitifs : logique, verbale, musicale, kinesthésique, spatiale, interpersonnelle, intrapersonnelle, écologique."},
     {key:'t2', emoji:'⚡', label:'SISEM — Mes moteurs de motivation', duree:'10 min', explication:"Révèle ce qui vous met en mouvement au travail : sens, défis, sécurité, relations, autonomie, reconnaissance."},
-    {key:'t3', emoji:'🌟', label:'Les activités que j\'aime', duree:'10 min', explication:"Recense les activités, privées ou professionnelles, qui vous procurent plaisir, satisfaction et énergie."},
+    {key:'t3', emoji:'🌟', label:'Les activités que j’aime', duree:'10 min', explication:"Recense les activités, privées ou professionnelles, qui vous procurent plaisir, satisfaction et énergie."},
     {key:'t4', emoji:'✨', label:'Le métier de mes rêves', duree:'10 min', explication:"Capture vos aspirations professionnelles à travers 4 questions ouvertes : métier rêvé, secteur, motivations, environnement idéal."},
     {key:'t5', emoji:'🎯', label:'IMIC / RIASEC', duree:'20 min', explication:"Identifie votre profil professionnel selon le modèle RIASEC à travers vos activités préférées, compétences, valeurs et intérêts."},
   ];
