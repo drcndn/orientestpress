@@ -2924,30 +2924,36 @@ function exportPDF() {
     content += 'Cette synthèse a été générée avec l'aide d'une intelligence artificielle. Les données utilisées sont préalablement anonymisées. Le contenu est systématiquement relu et validé par votre coach. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment.';
     content += '</div>';
 
-    // AFFICHER L'OVERLAY
-    const existing = document.getElementById('pdfOverlay');
-    if (existing) existing.remove();
+    // AFFICHER VIA BLOB URL
+    const fullHtml = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">'
+      + '<title>Résultats OrienTestPress</title>'
+      + '<style>'
+      + '@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap");'
+      + '* {margin:0;padding:0;box-sizing:border-box;}'
+      + 'body {font-family:"DM Sans",sans-serif;color:#111827;padding:2rem;max-width:780px;margin:0 auto;font-size:14px;}'
+      + 'h1,h2,h3 {font-family:"Sora",sans-serif;}'
+      + '.toolbar {position:sticky;top:0;background:white;padding:0.75rem 0 1rem;border-bottom:2px solid #F97316;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}'
+      + '.btn-print {background:#F97316;color:white;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:"Sora",sans-serif;font-weight:700;cursor:pointer;font-size:0.9rem;}'
+      + '.btn-close {background:#F3F4F6;color:#374151;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:"Sora",sans-serif;font-weight:600;cursor:pointer;font-size:0.9rem;}'
+      + '@media print {.toolbar{display:none!important} * {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}'
+      + '</style></head><body>'
+      + '<div class="toolbar">'
+      + '<div><div style="font-family:Sora,sans-serif;font-weight:700;font-size:1rem;">📄 Aperçu avant impression</div>'
+      + '<div style="font-size:0.75rem;color:#6B7280;margin-top:0.15rem;">Cliquez sur Imprimer puis choisissez "Enregistrer en PDF"</div></div>'
+      + '<div style="display:flex;gap:0.5rem;">'
+      + '<button class="btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>'
+      + '<button class="btn-close" onclick="window.close()">✕ Fermer</button>'
+      + '</div></div>'
+      + content
+      + '</body></html>';
 
-    const overlay = document.createElement('div');
-    overlay.id = 'pdfOverlay';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:99999;overflow-y:auto;padding:1.5rem;';
-
-    const toolbar = document.createElement('div');
-    toolbar.className = 'no-print';
-    toolbar.style.cssText = 'position:sticky;top:0;background:white;padding:0.75rem 0 1rem;border-bottom:2px solid #F97316;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;z-index:10;';
-    toolbar.innerHTML = '<div><div style="font-family:Sora,sans-serif;font-weight:700;font-size:1rem;">📄 Aperçu avant impression</div><div style="font-size:0.75rem;color:#6B7280;margin-top:0.15rem;">Cliquez sur Imprimer puis choisissez "Enregistrer en PDF"</div></div><div style="display:flex;gap:0.5rem;"><button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:700;cursor:pointer;">🖨️ Imprimer / PDF</button><button onclick="document.getElementById('pdfOverlay').remove();" style="background:#F3F4F6;color:#374151;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">✕ Fermer</button></div>';
-
-    const body = document.createElement('div');
-    body.style.cssText = 'max-width:750px;margin:0 auto;font-family:DM Sans,sans-serif;';
-    body.innerHTML = content;
-
-    const style = document.createElement('style');
-    style.textContent = '@media print { .no-print{display:none!important} #pdfOverlay{padding:0!important} * {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important} }';
-
-    overlay.appendChild(toolbar);
-    overlay.appendChild(body);
-    overlay.appendChild(style);
-    document.body.appendChild(overlay);
+    const blob = new Blob([fullHtml], {type: 'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
 
   } catch(err) {
     alert('Erreur lors de la génération du PDF : ' + err.message);
