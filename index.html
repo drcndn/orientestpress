@@ -2783,227 +2783,176 @@ function buildExportData() {
 }
 
 function exportPDF() {
-  const d = buildExportData();
-  const p = d.participant;
-  const t = d.tests;
-  const date = new Date().toLocaleDateString('fr-BE', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  try {
+    const t = state.tests;
+    const p = state.participant;
+    let content = '';
 
-  // Barres texte ASCII pour les scores
-  function barText(val, max, len=20) {
-    const filled = Math.round((val/max)*len);
-    return '█'.repeat(filled) + '░'.repeat(len-filled) + ` ${val}/${max}`;
-  }
+    // EN-TÊTE
+    content += '<div style="text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:3px solid #F97316;">';
+    content += '<h1 style="font-family:Sora,sans-serif;font-size:1.5rem;font-weight:800;margin:0 0 0.5rem 0;">Résultats OrienTestPress</h1>';
+    content += '<p style="color:#6B7280;margin:0;">' + (p.prenom||'') + ' ' + (p.nom||'') + ' — ' + (p.date||'') + '</p>';
+    content += '<p style="color:#9CA3AF;font-size:0.8rem;margin:0.2rem 0 0 0;">Code : ' + (p.code||'—') + '</p>';
+    content += '</div>';
 
-  let content = '';
+    // TEST 1 — IM
+    if (t.t1.done && t.t1.scores) {
+      const scores = t.t1.scores;
+      const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+      const top2 = [sorted[0][0], sorted[1][0]];
+      content += '<h2 style="font-family:Sora,sans-serif;color:#F97316;border-left:4px solid #F97316;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">🧠 Test 1 — Intelligences multiples</h2>';
+      content += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">';
+      content += '<tr style="background:#FFF7ED;"><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Intelligence</th><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;">Score</th></tr>';
+      sorted.forEach(([cat, val]) => {
+        const isTop = top2.includes(cat);
+        content += '<tr style="background:' + (isTop?'#FFF7ED':'white') + '">';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;font-weight:' + (isTop?'700':'400') + ';">' + (IM_LABELS[cat]||cat) + (isTop?' ⭐':'') + '</td>';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;font-weight:700;color:#F97316;">' + val + '/10</td>';
+        content += '</tr>';
+      });
+      content += '</table>';
+      top2.forEach(cat => {
+        const desc = IM_DETAILS[cat];
+        if (!desc) return;
+        content += '<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:0.75rem;margin-bottom:0.5rem;">';
+        content += '<div style="font-weight:700;color:#F97316;margin-bottom:0.3rem;">⭐ ' + (IM_LABELS[cat]||cat) + '</div>';
+        content += '<p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.4rem 0;">' + desc.definition + '</p>';
+        content += '<div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers :</strong> ' + desc.metiers.slice(0,8).join(', ') + '</div>';
+        content += '</div>';
+      });
+    }
 
-  // ── EN-TÊTE ──
-  content += `
-    <div style="text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:3px solid #F97316;">
-      <div style="font-size:1.8rem;margin-bottom:0.5rem;">🧭</div>
-      <h1 style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;color:#111827;margin:0 0 0.25rem 0;">Résultats OrienTestPress</h1>
-      <p style="color:#6B7280;font-size:0.9rem;margin:0;">${p.prenom} ${p.nom} — ${p.date || date}</p>
-      <p style="color:#9CA3AF;font-size:0.8rem;margin:0.25rem 0 0 0;">Code de référence : ${p.code || '—'}</p>
-    </div>`;
+    // TEST 2 — SISEM
+    if (t.t2.done && t.t2.scores) {
+      const scores = t.t2.scores;
+      const top3 = t.t2.topMotors || [];
+      const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+      content += '<h2 style="font-family:Sora,sans-serif;color:#2563EB;border-left:4px solid #2563EB;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">⚡ Test 2 — SISEM</h2>';
+      content += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">';
+      content += '<tr style="background:#EFF6FF;"><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Moteur</th><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;">Score</th></tr>';
+      sorted.forEach(([code, val]) => {
+        const isTop = top3.includes(code);
+        content += '<tr style="background:' + (isTop?'#EFF6FF':'white') + '">';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;font-weight:' + (isTop?'700':'400') + ';">' + (SISEM_LABELS[code]||code) + (isTop?' ⭐':'') + '</td>';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;font-weight:700;color:#2563EB;">' + val + '/15</td>';
+        content += '</tr>';
+      });
+      content += '</table>';
+      [[0,1],[0,2],[1,2]].forEach(([a,b], i) => {
+        if (!top3[a] || !top3[b]) return;
+        const actData = getCrossingData(top3[a], top3[b]);
+        content += '<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:0.75rem;margin-bottom:0.5rem;">';
+        content += '<div style="font-weight:700;margin-bottom:0.3rem;">' + (i+1) + '. ' + actData.label + '</div>';
+        content += '<p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.4rem 0;">' + actData.description + '</p>';
+        content += '<div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers :</strong> ' + actData.metiers.join(', ') + '</div>';
+        content += '</div>';
+      });
+    }
 
-  // ── TEST 1 : IM ──
-  if (t.intelligences_multiples && Object.keys(t.intelligences_multiples.scores).length > 0) {
-    const scores = t.intelligences_multiples.scores;
-    const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-    const maxScore = sorted[0][1];
-    const top = sorted.filter(([,v])=>v===maxScore).map(([k])=>k);
-    const topDisplay = top.length===1 ? [top[0], sorted[1][0]] : top.slice(0,2);
+    // TEST 3 — ACTIVITÉS
+    if (t.t3.done && t.t3.activities) {
+      const acts = t.t3.activities.filter(a => a.activite && a.activite.trim());
+      content += '<h2 style="font-family:Sora,sans-serif;color:#16A34A;border-left:4px solid #16A34A;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">🌟 Test 3 — Activités que j'aime</h2>';
+      content += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">';
+      content += '<tr style="background:#F0FDF4;"><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Activité</th><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Mots-clés</th></tr>';
+      acts.forEach(a => {
+        content += '<tr><td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;font-weight:500;">' + a.activite + '</td>';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;color:#6B7280;">' + (a.motsCles||'—') + '</td></tr>';
+      });
+      content += '</table>';
+    }
 
-    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#F97316;border-left:4px solid #F97316;padding-left:0.75rem;margin-bottom:1rem;">🧠 Test 1 — Intelligences multiples</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
-        <tr style="background:#FFF7ED;">
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Intelligence</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Score</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
-        </tr>
-        ${sorted.map(([cat,val])=>`
-        <tr style="background:${topDisplay.includes(cat)?'#FFF7ED':'white'}">
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${topDisplay.includes(cat)?700:400};">${IM_LABELS[cat]}${topDisplay.includes(cat)?' ⭐':''}</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#F97316;">${val}/10</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(val)}${'░'.repeat(10-val)}</td>
-        </tr>`).join('')}
-      </table>`;
+    // TEST 4 — MÉTIER DE RÊVES
+    if (t.t4.done && t.t4.reponses) {
+      const r = t.t4.reponses;
+      content += '<h2 style="font-family:Sora,sans-serif;color:#7C3AED;border-left:4px solid #7C3AED;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">✨ Test 4 — Le métier de mes rêves</h2>';
+      const questions = [
+        ['Métier idéal', r.metier_reve],
+        ['Secteur idéal', r.secteur_ideal],
+        ['Motivations profondes', r.motivations],
+        ['Environnement idéal', r.environnement_travail]
+      ];
+      questions.forEach(([label, val]) => {
+        if (!val) return;
+        content += '<div style="margin-bottom:0.75rem;">';
+        content += '<div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">' + label + '</div>';
+        content += '<div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">' + val + '</div>';
+        content += '</div>';
+      });
+    }
 
-    topDisplay.slice(0,2).forEach(cat => {
-      const desc = IM_DETAILS[cat];
-      if (!desc) return;
-      content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
-        <div style="font-weight:700;font-size:0.875rem;color:#F97316;margin-bottom:0.4rem;">⭐ ${IM_LABELS[cat]}</div>
-        <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.5rem 0;">${desc.definition}</p>
-        <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers associés :</strong> ${desc.metiers.join(', ')}</div>
-      </div>`;
-    });
-    content += `</div>`;
-  }
-
-  // ── TEST 2 : SISEM ──
-  if (t.sisem && Object.keys(t.sisem.scores).length > 0) {
-    const scores = t.sisem.scores;
-    const top3 = t.sisem.top3_moteurs || [];
-    const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-
-    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#2563EB;border-left:4px solid #2563EB;padding-left:0.75rem;margin-bottom:1rem;">⚡ Test 2 — SISEM</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
-        <tr style="background:#EFF6FF;">
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Moteur</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Score</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
-        </tr>
-        ${sorted.map(([code,val])=>`
-        <tr style="background:${top3.includes(code)?'#EFF6FF':'white'}">
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${top3.includes(code)?700:400};">${SISEM_LABELS[code]}${top3.includes(code)?' ⭐':''}</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#2563EB;">${val}/15</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(Math.round(val/15*15))}${'░'.repeat(15-Math.round(val/15*15))}</td>
-        </tr>`).join('')}
-      </table>`;
-
-    [[0,1],[0,2],[1,2]].forEach(([a,b],i) => {
-      if (!top3[a] || !top3[b]) return;
-      const actData = getCrossingData(top3[a], top3[b]);
-      content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
-        <div style="font-weight:700;font-size:0.875rem;margin-bottom:0.3rem;">${i+1}. ${actData.label} <span style="font-size:0.75rem;color:#6B7280;">(${SISEM_LABELS[top3[a]]} + ${SISEM_LABELS[top3[b]]})</span></div>
-        <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.4rem 0;">${actData.description}</p>
-        <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers :</strong> ${actData.metiers.join(', ')}</div>
-      </div>`;
-    });
-    content += `</div>`;
-  }
-
-  // ── TEST 3 : ACTIVITÉS ──
-  if (t.activites && t.activites.liste && t.activites.liste.length > 0) {
-    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#16A34A;border-left:4px solid #16A34A;padding-left:0.75rem;margin-bottom:1rem;">🌟 Test 3 — Activités que j'aime</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
-        <tr style="background:#F0FDF4;">
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Activité</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Mots-clés</th>
-        </tr>
-        ${t.activites.liste.map(a=>`
-        <tr>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:500;">${a.activite}</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;color:#6B7280;font-size:0.8rem;">${a.motsCles||'—'}</td>
-        </tr>`).join('')}
-      </table>
-    </div>`;
-  }
-
-  // ── TEST 4 : MÉTIER DE RÊVES ──
-  if (t.metier_reves && (t.metier_reves.metier_reve || t.metier_reves.secteur_ideal)) {
-    const r = t.metier_reves;
-    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#7C3AED;border-left:4px solid #7C3AED;padding-left:0.75rem;margin-bottom:1rem;">✨ Test 4 — Le métier de mes rêves</h2>
-      ${r.metier_reve?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Métier idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.metier_reve}</div></div>`:''}
-      ${r.secteur_ideal?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Secteur idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.secteur_ideal}</div></div>`:''}
-      ${r.motivations?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Motivations profondes</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.motivations}</div></div>`:''}
-      ${r.environnement_travail?`<div style="margin-bottom:0.75rem;"><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Environnement idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:6px;padding:0.625rem;font-size:0.875rem;">${r.environnement_travail}</div></div>`:''}
-    </div>`;
-  }
-
-  // ── TEST 5 : IMIC/RIASEC ──
-  if (t.imic_riasec && t.imic_riasec.scores_total && Object.keys(t.imic_riasec.scores_total).length > 0) {
-    const total = t.imic_riasec.scores_total;
-    const top3 = t.imic_riasec.top3 ? t.imic_riasec.top3.split('') : [];
-    const sorted = Object.entries(total).sort((a,b)=>b[1]-a[1]);
-    const maxPts = Math.max(...Object.values(total));
-
-    content += `<div style="margin-bottom:2rem;page-break-inside:avoid;">
-      <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#DC2626;border-left:4px solid #DC2626;padding-left:0.75rem;margin-bottom:1rem;">🎯 Test 5 — IMIC / RIASEC</h2>
-      <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
-        ${top3.map((l,i)=>`<div style="text-align:center;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:0.75rem 1rem;">
-          <div style="font-size:1.5rem;font-weight:800;color:${RIASEC_COLORS[l]}">${l}</div>
-          <div style="font-size:0.8rem;font-weight:600;">${RIASEC_LABELS[l]}</div>
-          <div style="font-size:0.75rem;color:#6B7280;">${total[l]} pts · #${i+1}</div>
-        </div>`).join('')}
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
-        <tr style="background:#FEF2F2;">
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Profil</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Points</th>
-          <th style="padding:0.5rem;text-align:left;border:1px solid #E5E7EB;">Niveau</th>
-        </tr>
-        ${sorted.map(([l,val])=>`
-        <tr style="background:${top3.includes(l)?'#FEF2F2':'white'}">
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:${top3.includes(l)?700:400};">${l} — ${RIASEC_LABELS[l]}${top3.includes(l)?' ⭐':''}</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-weight:700;color:#DC2626;">${val}</td>
-          <td style="padding:0.5rem;border:1px solid #E5E7EB;font-size:0.75rem;color:#374151;">${'█'.repeat(Math.round(val/50*20))}${'░'.repeat(20-Math.round(val/50*20))}</td>
-        </tr>`).join('')}
-      </table>`;
-
-    if (top3.length > 0) {
-      const domType = RIASEC_DOMINANT_TYPES[top3[0]];
-      if (domType) {
-        content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
-          <div style="font-weight:700;font-size:0.875rem;color:#DC2626;margin-bottom:0.4rem;">${domType.title}</div>
-          <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0;">${domType.text.slice(0,400)}...</p>
-        </div>`;
-      }
-      if (top3.length >= 2) {
-        const prof2key = top3[0]+top3[1];
-        const prof2 = RIASEC_PROFILES_2[prof2key] || RIASEC_PROFILES_2[top3[1]+top3[0]];
-        if (prof2) {
-          content += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;">
-            <div style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem;">⭐ ${prof2.title}</div>
-            <p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.5rem 0;">${prof2.text.slice(0,300)}...</p>
-            <div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers suggérés :</strong> ${prof2.metiers.join(', ')}</div>
-          </div>`;
+    // TEST 5 — IMIC/RIASEC
+    if (t.t5.done && t.t5.q4.total) {
+      const total = t.t5.q4.total;
+      const top3 = Array.isArray(t.t5.q4.top3) ? t.t5.q4.top3 : [];
+      const sorted = Object.entries(total).sort((a,b) => b[1]-a[1]);
+      content += '<h2 style="font-family:Sora,sans-serif;color:#DC2626;border-left:4px solid #DC2626;padding-left:0.75rem;margin:1.5rem 0 0.75rem 0;font-size:1rem;">🎯 Test 5 — IMIC / RIASEC</h2>';
+      content += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">';
+      content += '<tr style="background:#FEF2F2;"><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:left;">Profil</th><th style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;">Points</th></tr>';
+      sorted.forEach(([l, val]) => {
+        const isTop = top3.includes(l);
+        content += '<tr style="background:' + (isTop?'#FEF2F2':'white') + '">';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;font-weight:' + (isTop?'700':'400') + ';">' + l + ' — ' + (RIASEC_LABELS[l]||l) + (isTop?' ⭐':'') + '</td>';
+        content += '<td style="padding:0.4rem 0.6rem;border:1px solid #E5E7EB;text-align:center;font-weight:700;color:#DC2626;">' + val + '</td>';
+        content += '</tr>';
+      });
+      content += '</table>';
+      if (top3.length > 0) {
+        const domType = RIASEC_DOMINANT_TYPES[top3[0]];
+        if (domType) {
+          content += '<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:0.75rem;margin-bottom:0.5rem;">';
+          content += '<div style="font-weight:700;color:#DC2626;margin-bottom:0.3rem;">' + domType.title + '</div>';
+          content += '<p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0;">' + domType.text.slice(0,350) + '...</p>';
+          content += '</div>';
+        }
+        if (top3.length >= 2) {
+          const prof2 = RIASEC_PROFILES_2[top3[0]+top3[1]] || RIASEC_PROFILES_2[top3[1]+top3[0]];
+          if (prof2) {
+            content += '<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:0.75rem;">';
+            content += '<div style="font-weight:700;margin-bottom:0.3rem;">⭐ ' + prof2.title + '</div>';
+            content += '<p style="font-size:0.82rem;color:#374151;line-height:1.6;margin:0 0 0.4rem 0;">' + prof2.text.slice(0,300) + '...</p>';
+            content += '<div style="font-size:0.78rem;color:#6B7280;"><strong>Métiers :</strong> ' + prof2.metiers.join(', ') + '</div>';
+            content += '</div>';
+          }
         }
       }
     }
-    content += `</div>`;
+
+    // MENTION IA
+    content += '<div style="margin-top:2rem;padding:0.875rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;font-size:0.75rem;color:#6B7280;line-height:1.6;">';
+    content += '<strong style="color:#374151;">Informations relatives à l'utilisation de l'intelligence artificielle</strong><br>';
+    content += 'Cette synthèse a été générée avec l'aide d'une intelligence artificielle. Les données utilisées sont préalablement anonymisées. Le contenu est systématiquement relu et validé par votre coach. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment.';
+    content += '</div>';
+
+    // AFFICHER L'OVERLAY
+    const existing = document.getElementById('pdfOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'pdfOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:99999;overflow-y:auto;padding:1.5rem;';
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'no-print';
+    toolbar.style.cssText = 'position:sticky;top:0;background:white;padding:0.75rem 0 1rem;border-bottom:2px solid #F97316;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;z-index:10;';
+    toolbar.innerHTML = '<div><div style="font-family:Sora,sans-serif;font-weight:700;font-size:1rem;">📄 Aperçu avant impression</div><div style="font-size:0.75rem;color:#6B7280;margin-top:0.15rem;">Cliquez sur Imprimer puis choisissez "Enregistrer en PDF"</div></div><div style="display:flex;gap:0.5rem;"><button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:700;cursor:pointer;">🖨️ Imprimer / PDF</button><button onclick="document.getElementById('pdfOverlay').remove();" style="background:#F3F4F6;color:#374151;border:none;padding:0.5rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:600;cursor:pointer;">✕ Fermer</button></div>';
+
+    const body = document.createElement('div');
+    body.style.cssText = 'max-width:750px;margin:0 auto;font-family:DM Sans,sans-serif;';
+    body.innerHTML = content;
+
+    const style = document.createElement('style');
+    style.textContent = '@media print { .no-print{display:none!important} #pdfOverlay{padding:0!important} * {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important} }';
+
+    overlay.appendChild(toolbar);
+    overlay.appendChild(body);
+    overlay.appendChild(style);
+    document.body.appendChild(overlay);
+
+  } catch(err) {
+    alert('Erreur lors de la génération du PDF : ' + err.message);
+    console.error(err);
   }
-
-  // ── MENTION IA ──
-  content += `<div style="margin-top:2rem;padding:1rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-size:0.78rem;color:#6B7280;line-height:1.6;">
-    <strong style="color:#374151;">Informations relatives à l'utilisation de l'intelligence artificielle</strong><br>
-    Cette synthèse a été générée avec l'aide d'une intelligence artificielle à partir de vos réponses aux tests et des échanges réalisés avec votre coach. Les données utilisées sont préalablement anonymisées et ne contiennent aucune information permettant de vous identifier directement.<br>
-    Le contenu généré constitue une aide à la réflexion et à l'orientation. Il est systématiquement relu et validé par votre coach et ne fait l'objet d'aucune décision automatisée.<br>
-    Conformément au RGPD, vous pouvez demander à tout moment la suppression des données utilisées dans le cadre de cet accompagnement.
-  </div>`;
-
-  // ── GÉNÉRER VIA OVERLAY PLEIN ÉCRAN ──
-  // Supprimer overlay existant si présent
-  const existing = document.getElementById('pdfOverlay');
-  if (existing) existing.remove();
-
-  const overlay = document.createElement('div');
-  overlay.id = 'pdfOverlay';
-  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:99999;overflow-y:auto;padding:2rem;font-family:DM Sans,sans-serif;';
-
-  overlay.innerHTML = `
-    <div style="max-width:800px;margin:0 auto;">
-      <div style="position:sticky;top:0;background:white;padding:0.75rem 0 1rem;border-bottom:2px solid #F97316;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;z-index:10;" class="no-print">
-        <div>
-          <div style="font-family:Sora,sans-serif;font-weight:700;font-size:1rem;color:#111827;">📄 Aperçu avant impression</div>
-          <div style="font-size:0.78rem;color:#6B7280;margin-top:0.2rem;">Cliquez sur "Imprimer" puis choisissez "Enregistrer en PDF" comme imprimante</div>
-        </div>
-        <div style="display:flex;gap:0.5rem;flex-shrink:0;">
-          <button onclick="window.print()" style="background:#F97316;color:white;border:none;padding:0.6rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
-            🖨️ Imprimer / PDF
-          </button>
-          <button onclick="document.getElementById('pdfOverlay').remove();" style="background:#F3F4F6;color:#374151;border:none;padding:0.6rem 1.25rem;border-radius:8px;font-family:Sora,sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;">
-            ✕ Fermer
-          </button>
-        </div>
-      </div>
-      <div id="pdfContent">${content}</div>
-    </div>
-    <style>
-      @media print {
-        #pdfOverlay > div > div:first-child { display:none !important; }
-        #pdfOverlay { padding:0.5rem !important; }
-        * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-      }
-    </style>
-  `;
-
-  document.body.appendChild(overlay);
-  overlay.scrollTop = 0;
 }
 
 function exportJSON() {
