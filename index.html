@@ -725,10 +725,22 @@
     <div class="test-cards" id="testCards">
       <!-- filled by JS -->
     </div>
+    <!-- Bouton résultats toujours visible si au moins 1 test fait -->
+    <div id="recapBtnSection" style="display:none;margin-top:1.5rem;">
+      <button class="btn btn-secondary btn-full" onclick="showRecap()" style="gap:0.5rem;">
+        📊 Voir tous mes résultats
+      </button>
+    </div>
+
     <div id="allDoneSection" style="display:none; margin-top:2rem;">
       <div class="export-section">
         <div class="export-title">🎉 Tous les tests sont complétés !</div>
-        <div class="export-desc">Téléchargez vos résultats pour les partager avec votre coach.</div>
+        <div class="export-desc">Consultez votre bilan complet ou téléchargez vos résultats.</div>
+        <div style="margin-bottom:1rem;">
+          <button class="btn btn-primary btn-full btn-lg" onclick="showRecap()" style="background:linear-gradient(135deg,#F97316,#EA580C);">
+            📊 Voir mon bilan complet
+          </button>
+        </div>
         <div class="export-buttons">
           <button class="btn btn-export-json" onclick="exportJSON()">⬇ Télécharger (JSON)</button>
           <button class="btn btn-export-csv" onclick="exportCSV()">⬇ Télécharger (CSV)</button>
@@ -772,9 +784,14 @@
   <div class="container">
     <div class="done-banner">✅ Test 1 terminé — Intelligences multiples</div>
     <div class="results-card" id="t1Results"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
-      Continuer les tests →
-    </button>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+        Continuer les tests →
+      </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">
+        💾 Sauvegarder et quitter
+      </button>
+    </div>
   </div>
 </div>
 
@@ -812,9 +829,14 @@
   <div class="container">
     <div class="done-banner">✅ Test 2 terminé — SISEM</div>
     <div class="results-card" id="t2Results"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
-      Continuer les tests →
-    </button>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+        Continuer les tests →
+      </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">
+        💾 Sauvegarder et quitter
+      </button>
+    </div>
   </div>
 </div>
 
@@ -837,10 +859,11 @@
     <div style="text-align:center; margin: 0.5rem 0 1.5rem;">
       <button class="btn btn-secondary btn-sm" onclick="addActivity()">+ Ajouter une activité</button>
     </div>
-    <div class="sticky-bottom">
+    <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
       <button class="btn btn-primary btn-full" id="t3Submit" onclick="submitT3()">
         Valider mes activités →
       </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
     </div>
   </div>
 </div>
@@ -878,10 +901,11 @@
         <textarea id="t4q4" placeholder="Bureau, extérieur, télétravail, équipe, autonomie…"></textarea>
       </div>
     </div>
-    <div class="sticky-bottom">
+    <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
       <button class="btn btn-primary btn-full" onclick="submitT4()">
         Valider cette section →
       </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
     </div>
   </div>
 </div>
@@ -924,9 +948,12 @@
         <strong>Rang 1</strong> = celle qui vous ressemble le PLUS.
       </div>
       <div class="rank-list" id="t5q1Ranking"></div>
-      <div class="sticky-bottom" style="display:flex; gap:0.75rem;">
-        <button class="btn btn-secondary" onclick="backToSelect()">← Modifier</button>
-        <button class="btn btn-primary" style="flex:1;" onclick="submitT5Q1()">Enregistrer →</button>
+      <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn btn-secondary" onclick="backToSelect()">← Modifier</button>
+          <button class="btn btn-primary" style="flex:1;" onclick="submitT5Q1()">Enregistrer →</button>
+        </div>
+        <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
       </div>
     </div>
   </div>
@@ -957,10 +984,11 @@
       <span>Sélectionnées :</span> <span class="count" id="t5q2Count">0</span> / 20
     </div>
     <div class="checkbox-list" id="t5q2Phrases"></div>
-    <div class="sticky-bottom">
+    <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
       <button class="btn btn-primary btn-full" id="t5q2Submit" onclick="submitT5Q2()" disabled>
         Enregistrer →
       </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
     </div>
   </div>
 </div>
@@ -990,10 +1018,11 @@
       <span>Sélectionnés :</span> <span class="count" id="t5q3Count">0</span> / 40 max (20 min)
     </div>
     <div class="verbs-grid" id="t5q3Verbs"></div>
-    <div class="sticky-bottom">
+    <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
       <button class="btn btn-primary btn-full" id="t5q3Submit" onclick="submitT5Q3()" disabled>
         Enregistrer →
       </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
     </div>
   </div>
 </div>
@@ -1023,10 +1052,11 @@
       <span>Sélectionnées :</span> <span class="count" id="t5q4Count">0</span> / 20
     </div>
     <div class="checkbox-list" id="t5q4Qualities"></div>
-    <div class="sticky-bottom">
+    <div class="sticky-bottom" style="display:flex;flex-direction:column;gap:0.5rem;">
       <button class="btn btn-primary btn-full" id="t5q4Submit" onclick="submitT5Q4()" disabled>
         Terminer le test IMIC →
       </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">💾 Sauvegarder et quitter</button>
     </div>
   </div>
 </div>
@@ -1038,9 +1068,32 @@
   <div class="container">
     <div class="done-banner">✅ Test 5 terminé — IMIC / RIASEC</div>
     <div class="results-card" id="t5Results"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
-      Retour à l'accueil →
-    </button>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+        Retour à l'accueil →
+      </button>
+      <button class="btn btn-secondary btn-full" onclick="saveAndQuit()">
+        💾 Sauvegarder et quitter
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN RECAP : MES RÉSULTATS               -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-recap">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <h1 class="screen-title" style="margin-bottom:0;">📊 Mes résultats</h1>
+      <button class="btn btn-secondary btn-sm" onclick="goToTestList()">← Retour</button>
+    </div>
+    <p style="color:#6B7280;font-size:0.9rem;margin-bottom:2rem;">Voici la synthèse de tous vos tests complétés.</p>
+    <div id="recapContent"></div>
+    <div style="margin-top:2rem;">
+      <button class="btn btn-secondary btn-full" onclick="goToTestList()">← Retour à mes tests</button>
+    </div>
   </div>
 </div>
 
@@ -1545,8 +1598,192 @@ function updateProgress() {
   document.getElementById('globalProgress').style.width = (done/5*100) + '%';
 }
 
+// ══════════════════════════════════════════════════════════
+// RÉCAPITULATIF — affiche tous les résultats
+// ══════════════════════════════════════════════════════════
+function showRecap() {
+  const content = document.getElementById('recapContent');
+  content.innerHTML = '';
+  const t = state.tests;
+  let html = '';
+
+  // ── TEST 1 : IM ──
+  if (t.t1.done) {
+    const scores = t.t1.scores;
+    const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+    const maxScore = sorted[0][1];
+    const top = sorted.filter(([,v]) => v === maxScore).map(([k]) => k);
+    const topDisplay = top.length === 1 ? [top[0], sorted[1][0]] : top.slice(0,2);
+
+    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+      <h3 style="margin-bottom:1rem;color:#F97316;">🧠 Test 1 — Intelligences multiples</h3>`;
+    sorted.forEach(([cat, val], i) => {
+      const isTop = topDisplay.includes(cat);
+      html += `<div class="score-bar-wrap">
+        <div class="score-bar-label">
+          <span style="font-weight:${isTop?700:400}">${IM_LABELS[cat]}</span>
+          <span class="score-val" style="color:${IM_COLORS[i]}">${val}/10</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-fill" style="width:${val/10*100}%;background:${IM_COLORS[i]};opacity:${isTop?1:0.45}"></div>
+        </div>
+      </div>`;
+    });
+    html += `<div style="margin-top:1.25rem;border-top:1px solid #E5E7EB;padding-top:1rem;">
+      <div style="font-weight:700;font-size:0.85rem;color:#6B7280;margin-bottom:0.75rem;">📖 Vos intelligences dominantes</div>`;
+    topDisplay.slice(0,2).forEach((cat, i) => {
+      const desc = IM_DETAILS[cat];
+      if (!desc) return;
+      html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+        <div style="font-weight:700;color:${IM_COLORS[i]};margin-bottom:0.4rem;">⭐ ${IM_LABELS[cat]}</div>
+        <p style="font-size:0.85rem;color:#374151;margin-bottom:0.625rem;line-height:1.6;">${desc.definition}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+          ${desc.metiers.slice(0,8).map(m => `<span style="background:${IM_COLORS[i]}18;color:${IM_COLORS[i]};border:1px solid ${IM_COLORS[i]}33;padding:0.15rem 0.5rem;border-radius:20px;font-size:0.75rem;">${m}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── TEST 2 : SISEM ──
+  if (t.t2.done) {
+    const scores = t.t2.scores;
+    const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+    const top3 = t.t2.topMotors;
+    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+      <h3 style="margin-bottom:1rem;color:#2563EB;">⚡ Test 2 — SISEM</h3>`;
+    sorted.forEach(([code, val]) => {
+      const isTop = top3.includes(code);
+      html += `<div class="score-bar-wrap">
+        <div class="score-bar-label">
+          <span style="font-weight:${isTop?700:400}">${SISEM_LABELS[code]}</span>
+          <span class="score-val" style="color:${SISEM_COLORS[code]}">${val}/15</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-fill" style="width:${val/15*100}%;background:${SISEM_COLORS[code]};opacity:${isTop?1:0.45}"></div>
+        </div>
+      </div>`;
+    });
+    html += `<div style="margin-top:1.25rem;border-top:1px solid #E5E7EB;padding-top:1rem;">
+      <div style="font-weight:700;font-size:0.85rem;color:#6B7280;margin-bottom:0.75rem;">📖 Vos 3 activités à explorer</div>`;
+    [[0,1],[0,2],[1,2]].forEach(([a,b], i) => {
+      const actData = getCrossingData(top3[a], top3[b]);
+      html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+        <div style="font-weight:700;margin-bottom:0.3rem;">${i+1}. ${actData.label}</div>
+        <div style="font-size:0.75rem;color:#6B7280;margin-bottom:0.4rem;">${SISEM_LABELS[top3[a]]} + ${SISEM_LABELS[top3[b]]}</div>
+        <p style="font-size:0.85rem;color:#374151;margin-bottom:0.5rem;line-height:1.6;">${actData.description}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+          ${actData.metiers.slice(0,6).map(m => `<span style="background:#F9731618;color:#EA580C;border:1px solid #F9731633;padding:0.15rem 0.5rem;border-radius:20px;font-size:0.75rem;">${m}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── TEST 3 : ACTIVITÉS ──
+  if (t.t3.done) {
+    const acts = t.t3.activities.filter(a => a.activite.trim() !== '');
+    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+      <h3 style="margin-bottom:1rem;color:#16A34A;">🌟 Test 3 — Activités que j'aime</h3>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        ${acts.map(a => `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:0.75rem;">
+          <div style="font-weight:600;color:#15803D;">${a.activite}</div>
+          ${a.motsCles ? `<div style="font-size:0.8rem;color:#6B7280;margin-top:0.2rem;">${a.motsCles}</div>` : ''}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // ── TEST 4 : MÉTIER DE RÊVES ──
+  if (t.t4.done) {
+    const r = t.t4.reponses;
+    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+      <h3 style="margin-bottom:1rem;color:#7C3AED;">✨ Test 4 — Le métier de mes rêves</h3>
+      <div style="display:flex;flex-direction:column;gap:0.875rem;">
+        ${r.metier_reve ? `<div><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Métier idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:0.75rem;font-size:0.9rem;color:#374151;">${r.metier_reve}</div></div>` : ''}
+        ${r.secteur_ideal ? `<div><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Secteur idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:0.75rem;font-size:0.9rem;color:#374151;">${r.secteur_ideal}</div></div>` : ''}
+        ${r.motivations ? `<div><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Motivations profondes</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:0.75rem;font-size:0.9rem;color:#374151;">${r.motivations}</div></div>` : ''}
+        ${r.environnement_travail ? `<div><div style="font-size:0.75rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Environnement idéal</div><div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:0.75rem;font-size:0.9rem;color:#374151;">${r.environnement_travail}</div></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // ── TEST 5 : IMIC/RIASEC ──
+  if (t.t5.done) {
+    const total = t.t5.q4.total;
+    const top3 = t.t5.q4.top3;
+    const sorted = Object.entries(total).sort((a,b) => b[1]-a[1]);
+    html += `<div class="results-card" style="margin-bottom:1.5rem;">
+      <h3 style="margin-bottom:1rem;color:#DC2626;">🎯 Test 5 — IMIC / RIASEC</h3>
+      <div style="display:flex;gap:0.75rem;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap;">
+        ${top3.map((l,i) => `<div style="text-align:center;">
+          <div style="width:52px;height:52px;border-radius:50%;background:${RIASEC_COLORS[l]};color:white;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;margin:0 auto 0.4rem;">${l}</div>
+          <div style="font-size:0.78rem;font-weight:600;">${RIASEC_LABELS[l]}</div>
+          <div style="font-size:0.72rem;color:#6B7280;">${total[l]} pts</div>
+        </div>`).join('')}
+      </div>`;
+    sorted.forEach(([l, val]) => {
+      const isTop = top3.includes(l);
+      const maxPts = 50;
+      html += `<div class="score-bar-wrap">
+        <div class="score-bar-label">
+          <span style="display:flex;align-items:center;gap:0.4rem;">
+            <span style="width:20px;height:20px;border-radius:50%;background:${RIASEC_COLORS[l]};color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;">${l}</span>
+            <span style="font-weight:${isTop?700:400}">${RIASEC_LABELS[l]}</span>
+          </span>
+          <span class="score-val" style="color:${RIASEC_COLORS[l]}">${val}</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-fill" style="width:${Math.min(val/maxPts*100,100)}%;background:${RIASEC_COLORS[l]};opacity:${isTop?1:0.45}"></div>
+        </div>
+      </div>`;
+    });
+    const domType = RIASEC_DOMINANT_TYPES[top3[0]];
+    const prof2key = top3[0] + top3[1];
+    const prof2 = RIASEC_PROFILES_2[prof2key] || RIASEC_PROFILES_2[top3[1]+top3[0]];
+    if (domType) {
+      html += `<div style="margin-top:1.25rem;border-top:1px solid #E5E7EB;padding-top:1rem;">
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;margin-bottom:0.75rem;">
+          <div style="font-weight:700;color:${RIASEC_COLORS[top3[0]]};margin-bottom:0.4rem;">${domType.title}</div>
+          <p style="font-size:0.85rem;color:#374151;line-height:1.6;">${domType.text.slice(0,300)}...</p>
+        </div>`;
+      if (prof2) {
+        html += `<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.875rem;">
+          <div style="font-weight:700;margin-bottom:0.4rem;">⭐ ${prof2.title}</div>
+          <p style="font-size:0.85rem;color:#374151;margin-bottom:0.625rem;line-height:1.6;">${prof2.text.slice(0,250)}...</p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+            ${prof2.metiers.slice(0,8).map(m => `<span style="background:${RIASEC_COLORS[top3[0]]}18;color:${RIASEC_COLORS[top3[0]]};border:1px solid ${RIASEC_COLORS[top3[0]]}33;padding:0.15rem 0.5rem;border-radius:20px;font-size:0.75rem;">${m}</span>`).join('')}
+          </div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+
+  if (html === '') {
+    html = `<div style="text-align:center;padding:3rem 1rem;color:#6B7280;">
+      <div style="font-size:3rem;margin-bottom:1rem;">📝</div>
+      <p>Aucun test complété pour le moment.<br>Commencez par un test pour voir vos résultats ici.</p>
+    </div>`;
+  }
+
+  content.innerHTML = html;
+  showScreen('recap');
+}
+
 function goToTestList() {
   renderTestList();
+  // Si tous les tests sont finis, proposer le recap
+  const allDone = ['t1','t2','t3','t4','t5'].every(k => state.tests[k].done);
+  if (allDone) {
+    setTimeout(() => {
+      if (confirm('🎉 Félicitations ! Tous vos tests sont complétés.\n\nVoulez-vous voir votre bilan complet ?')) {
+        showRecap();
+      }
+    }, 300);
+    return;
+  }
   showScreen('testlist');
 }
 
@@ -1583,6 +1820,9 @@ const TEST_DEFS = [
 function renderTestList() {
   const allDone = ['t1','t2','t3','t4','t5'].every(k => state.tests[k].done);
   document.getElementById('allDoneSection').style.display = allDone ? 'block' : 'none';
+  // Afficher le bouton recap si au moins 1 test fait
+  const anyDone = ['t1','t2','t3','t4','t5'].some(k => state.tests[k].done);
+  document.getElementById('recapBtnSection').style.display = anyDone && !allDone ? 'block' : 'none';
 
   const container = document.getElementById('testCards');
   container.innerHTML = '';
@@ -2413,6 +2653,34 @@ async function saveToSheet(testKey) {
 // ══════════════════════════════════════════════════════════
 // SAUVEGARDE LOCALE (localStorage)
 // ══════════════════════════════════════════════════════════
+function saveAndQuit() {
+  saveLocal();
+  saveToSheet('partial');
+  // Afficher confirmation puis retour accueil
+  const code = state.participant.code || '';
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  msg.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:2rem;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">💾</div>
+      <h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Progression sauvegardée !</h3>
+      <p style="font-size:0.875rem;color:#6B7280;margin-bottom:0.5rem;">Votre code de reprise :</p>
+      <div style="font-size:1.3rem;font-weight:800;color:#F97316;letter-spacing:0.08em;font-family:'Sora',sans-serif;margin-bottom:1rem;">${code}</div>
+      <p style="font-size:0.8rem;color:#9CA3AF;margin-bottom:1.5rem;">Notez ce code pour reprendre vos tests là où vous vous êtes arrêté(e).</p>
+      <button onclick="this.closest('div[style]').remove(); goToWelcome();"
+        style="background:linear-gradient(135deg,#F97316,#EA580C);color:white;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Sora',sans-serif;font-weight:600;cursor:pointer;width:100%;">
+        Retour à l'accueil
+      </button>
+    </div>`;
+  document.body.appendChild(msg);
+}
+
+function goToWelcome() {
+  showScreen('welcome');
+  // Réinitialiser les tabs
+  switchTab('new');
+}
+
 function saveLocal() {
   if (!state.participant.code) return;
   try {
