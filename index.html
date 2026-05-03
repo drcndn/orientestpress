@@ -703,6 +703,73 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN INTRO : AVANT DE COMMENCER          -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-intro">
+  <div class="container">
+
+    <!-- Titre -->
+    <div style="text-align:center;margin-bottom:2rem;padding-top:1rem;">
+      <h1 style="font-family:'Sora',sans-serif;font-size:1.75rem;font-weight:800;margin-bottom:0.75rem;">
+        Bienvenue dans votre parcours d'orientation
+      </h1>
+    </div>
+
+    <!-- 2 cartes intro -->
+    <div style="display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:1.5rem;">
+      <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:12px;padding:1.5rem;">
+        <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.875rem;color:#1E40AF;">
+          Avant de commencer...
+        </h2>
+        <div style="font-size:0.875rem;color:#374151;line-height:1.7;display:flex;flex-direction:column;gap:0.75rem;">
+          <p>Vous avez récemment rencontré votre conseiller en orientation et amorcé une réflexion sur votre parcours professionnel. Ces tests vous sont proposés pour prolonger ce travail, à votre rythme et en toute autonomie.</p>
+          <p>L'objectif est de vous aider à mieux vous connaître : identifier vos motivations, vos compétences et vos préférences professionnelles.</p>
+          <p>Ces tests n'ont rien d'évaluatif — il n'existe ni bonne ni mauvaise réponse. Ils sont simplement là pour vous permettre d'avancer dans votre réflexion personnelle.</p>
+          <p>Vos réponses constitueront une base précieuse pour nourrir vos prochains échanges avec votre coach.</p>
+        </div>
+      </div>
+
+      <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;padding:1.5rem;">
+        <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.875rem;color:#92400E;">
+          Quelques conseils pour bien vivre l'expérience
+        </h2>
+        <ul style="font-size:0.875rem;color:#374151;line-height:1.7;padding-left:1.25rem;margin:0 0 0.75rem 0;">
+          <li style="margin-bottom:0.4rem;">Installez-vous dans un endroit calme et confortable.</li>
+          <li style="margin-bottom:0.4rem;">Prévoyez environ <strong>1h05 au total</strong>, en une ou plusieurs séances selon vos disponibilités.</li>
+          <li style="margin-bottom:0.4rem;">Lisez attentivement les consignes avant chaque exercice.</li>
+          <li style="margin-bottom:0.4rem;">Répondez de manière sincère et spontanée : fiez-vous à vos ressentis, à vos envies et à vos expériences.</li>
+        </ul>
+        <p style="font-size:0.85rem;color:#92400E;font-style:italic;">Gardez en tête que le plus important est que vos réponses vous ressemblent.</p>
+      </div>
+    </div>
+
+    <!-- Parcours suggéré -->
+    <div style="background:white;border:1.5px solid #E5E7EB;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+        <h2 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;">Parcours suggéré</h2>
+        <span style="font-size:0.75rem;color:#9CA3AF;">— vous restez libre de l'ordre</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;" id="introParcours"></div>
+      <p style="margin-top:1rem;font-size:0.78rem;color:#6B7280;">
+        Durée totale estimée : <strong>~1h05</strong>. Vous pouvez quitter et reprendre à tout moment, vos réponses sont sauvegardées.
+      </p>
+    </div>
+
+    <!-- Bouton commencer -->
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToTestList()">
+        Commencer mes tests →
+      </button>
+      <button class="btn btn-secondary btn-full btn-sm" onclick="showRecap()" id="introRecapBtn" style="display:none;">
+        📊 Voir mes résultats
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════ -->
 <!-- SCREEN 1 : LISTE DES TESTS                 -->
 <!-- ═══════════════════════════════════════════ -->
@@ -1838,19 +1905,19 @@ function startTests() {
   document.getElementById('headerName').textContent = prenom + ' ' + nom;
   document.getElementById('displayCode').textContent = code;
   saveLocal();
-  renderTestList();
-  showScreen('testlist');
+  renderIntroParcours();
+  showScreen('intro');
 }
 
 // ══════════════════════════════════════════════════════════
 // TEST LIST
 // ══════════════════════════════════════════════════════════
 const TEST_DEFS = [
-  { key:'t1', title:'Intelligences multiples', desc:'80 phrases — cochez celles qui vous ressemblent', icon:'🧠', color:'#FFF7ED', screen:'t1' },
-  { key:'t2', title:'SISEM — Mes moteurs', desc:'45 paires A/B — choisissez la plus attirante', icon:'⚡', color:'#EFF6FF', screen:'t2' },
-  { key:'t3', title:'Les activités que j\'aime', desc:'Listez librement vos activités favorites', icon:'🌟', color:'#F0FDF4', screen:'t3' },
-  { key:'t4', title:'Le métier de mes rêves', desc:'4 questions ouvertes sur vos aspirations', icon:'✨', color:'#FDF4FF', screen:'t4' },
-  { key:'t5', title:'IMIC / RIASEC', desc:'4 questionnaires — image de soi, motivations, savoir-faire, savoir-être', icon:'🎯', color:'#FEF2F2', screen:'t5q1' }
+  { key:'t1', title:'Intelligences multiples', desc:'80 phrases — cochez celles qui vous ressemblent', explication:"Évalue vos préférences dans 8 domaines cognitifs : logique, verbale, musicale, kinesthésique, spatiale, interpersonnelle, intrapersonnelle, écologique.", duree:'15 min', icon:'🧠', color:'#FFF7ED', screen:'t1' },
+  { key:'t2', title:'SISEM — Mes moteurs', desc:'45 paires A/B — choisissez la plus attirante', explication:"Révèle ce qui vous met en mouvement au travail : sens, défis, sécurité, relations, autonomie, reconnaissance.", duree:'10 min', icon:'⚡', color:'#EFF6FF', screen:'t2' },
+  { key:'t3', title:"Les activités que j'aime", desc:'Listez librement vos activités favorites', explication:"Recense les activités, privées ou professionnelles, qui vous procurent plaisir, satisfaction et énergie.", duree:'10 min', icon:'🌟', color:'#F0FDF4', screen:'t3' },
+  { key:'t4', title:'Le métier de mes rêves', desc:'4 questions ouvertes sur vos aspirations', explication:"Capture vos aspirations professionnelles à travers 4 questions ouvertes : métier rêvé, secteur, motivations, environnement idéal.", duree:'10 min', icon:'✨', color:'#FDF4FF', screen:'t4' },
+  { key:'t5', title:'IMIC / RIASEC', desc:'4 questionnaires — image de soi, motivations, savoir-faire, savoir-être', explication:"Identifie votre profil professionnel selon le modèle RIASEC à travers vos activités préférées, compétences, valeurs et intérêts.", duree:'20 min', icon:'🎯', color:'#FEF2F2', screen:'t5q1' }
 ];
 
 function renderTestList() {
@@ -1870,7 +1937,8 @@ function renderTestList() {
       <div class="test-card-icon" style="background:${def.color};">${def.icon}</div>
       <div class="test-card-info">
         <div class="test-card-title">${def.title}</div>
-        <div class="test-card-desc">${def.desc}</div>
+        <div class="test-card-desc">${def.explication}</div>
+        <div style="font-size:0.75rem;color:#9CA3AF;margin-top:0.2rem;">⏱ ${def.duree}</div>
       </div>
       <span class="test-card-status ${isDone ? 'status-done' : 'status-todo'}">${isDone ? '✓ Terminé' : 'À faire'}</span>
     `;
@@ -2689,6 +2757,35 @@ async function saveToSheet(testKey) {
 // ══════════════════════════════════════════════════════════
 // SAUVEGARDE LOCALE (localStorage)
 // ══════════════════════════════════════════════════════════
+function renderIntroParcours() {
+  const container = document.getElementById('introParcours');
+  if (!container) return;
+  const testDefs = [
+    {key:'t1', emoji:'🧠', label:'Intelligences multiples', duree:'15 min', explication:"Évalue vos préférences dans 8 domaines cognitifs : logique, verbale, musicale, kinesthésique, spatiale, interpersonnelle, intrapersonnelle, écologique."},
+    {key:'t2', emoji:'⚡', label:'SISEM — Mes moteurs de motivation', duree:'10 min', explication:"Révèle ce qui vous met en mouvement au travail : sens, défis, sécurité, relations, autonomie, reconnaissance."},
+    {key:'t3', emoji:'🌟', label:'Les activités que j\'aime', duree:'10 min', explication:"Recense les activités, privées ou professionnelles, qui vous procurent plaisir, satisfaction et énergie."},
+    {key:'t4', emoji:'✨', label:'Le métier de mes rêves', duree:'10 min', explication:"Capture vos aspirations professionnelles à travers 4 questions ouvertes : métier rêvé, secteur, motivations, environnement idéal."},
+    {key:'t5', emoji:'🎯', label:'IMIC / RIASEC', duree:'20 min', explication:"Identifie votre profil professionnel selon le modèle RIASEC à travers vos activités préférées, compétences, valeurs et intérêts."},
+  ];
+  container.innerHTML = testDefs.map((t, i) => {
+    const isDone = state.tests[t.key].done;
+    return `<div style="display:flex;align-items:center;gap:0.875rem;padding:0.875rem 1rem;border:1.5px solid ${isDone?'#BBF7D0':'#E5E7EB'};border-radius:8px;background:${isDone?'#F0FDF4':'white'};">
+      <span style="width:32px;height:32px;border-radius:50%;background:${isDone?'#16A34A':'#F3F4F6'};display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:${isDone?'white':'#6B7280'};flex-shrink:0;">${isDone?'✓':(i+1)}</span>
+      <span style="font-size:1rem;flex-shrink:0;">${t.emoji}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.875rem;font-weight:600;color:${isDone?'#15803D':'#111827'};">${t.label}</div>
+        <div style="font-size:0.75rem;color:#6B7280;">${t.explication}</div>
+      </div>
+      <span style="font-size:0.75rem;color:#9CA3AF;white-space:nowrap;flex-shrink:0;">⏱ ${t.duree}</span>
+    </div>`;
+  }).join('');
+
+  // Afficher bouton recap si au moins 1 test fait
+  const anyDone = ['t1','t2','t3','t4','t5'].some(k => state.tests[k].done);
+  const introRecapBtn = document.getElementById('introRecapBtn');
+  if (introRecapBtn) introRecapBtn.style.display = anyDone ? 'block' : 'none';
+}
+
 function scrollToSection(id) {
   // Petit délai pour laisser le contenu se rendre
   setTimeout(() => {
